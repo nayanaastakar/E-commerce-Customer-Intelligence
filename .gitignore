@@ -1,0 +1,13 @@
+.env
+.venv/
+__pycache__/
+*.pyc
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+exports/*
+!exports/.gitkeep
+*.pbix
+.kaggle/
+kaggle.json

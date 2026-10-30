@@ -1,0 +1,32 @@
+{
+  "status": "PASSED",
+  "table_counts": {
+    "stg_transactions": 536641,
+    "dim_date": 305,
+    "dim_customer": 4372,
+    "dim_product": 3958,
+    "dim_country": 38,
+    "fact_transaction_line": 536641
+  },
+  "python_kpis": {
+    "sales_invoices": 19960,
+    "customers": 4338,
+    "gross_sales": 10642110.8,
+    "returns": 893979.73,
+    "net_sales": 9748131.07,
+    "avg_invoice_value": 533.17,
+    "repeat_customers": 2845,
+    "repeat_purchase_rate": 0.6558
+  },
+  "sql_kpis": {
+    "sales_invoices": 19960,
+    "customers": 4338,
+    "gross_sales": 10642110.8,
+    "returns": 893979.73,
+    "net_sales": 9748131.07,
+    "repeat_customers": 2845,
+    "repeat_purchase_rate": 0.6558
+  },
+  "sql_rfm_customers": 4338,
+  "sql_cohort_cells": 91
+}
