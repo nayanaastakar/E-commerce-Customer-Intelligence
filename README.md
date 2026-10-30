@@ -1,5 +1,12 @@
-# E-Commerce Customer Intelligence & Retention Analytics Platform
-Python ETL → MySQL 8.0 Star Schema → SQL Analytics → Interactive Dashboard & Power BI Data Marts. **Fully verified end-to-end: see `docs/PROJECT_STATUS.md`.**
+# E-Commerce Customer Retention & Churn Analytics
+**Tech Stack**: Python, Pandas, MySQL, SQL, Power BI, Streamlit | **Fully verified end-to-end: see `docs/PROJECT_STATUS.md`**
+
+## Project Overview
+- **Developed a customer analytics solution** to analyse retention trends, churn patterns, and purchasing behaviour across 541,000+ transactional records.
+- **Implemented RFM segmentation, cohort analysis, and SQL window functions** (`ROW_NUMBER`, `NTILE`, `LAG`, running/rolling averages) to identify customer trends and lifecycle stages.
+- **Built an interactive dashboard & Power BI data model** to monitor customer retention, churn/inactivity bands, and key business performance indicators (£9.75M net sales, 65.58% repeat purchase rate).
+
+---
 
 ## Dataset
 Online Retail (UCI machine learning repository, id 352 / Kaggle `vijayuv/onlineretail`).
@@ -7,6 +14,18 @@ Online Retail (UCI machine learning repository, id 352 / Kaggle `vijayuv/onliner
 - **Raw Rows**: 541,909 records
 - **Clean Transactions**: 536,641 records (5,268 exact duplicates removed, 0 structural rejections)
 - **Net Sales**: £9,748,131.07 across 19,960 sales invoices and 4,338 unique customers
+
+---
+
+## Retention & Churn Framework
+In non-contractual retail e-commerce, customer churn does not occur via explicit cancellation but through purchasing lapse and inactivity:
+1. **Inactivity Bands (Churn Analysis)**: Customer lapsed time measured from last transaction:
+   - Active: $0–90$ days
+   - Lapsing / At Risk: $91–180$ days
+   - Dormant: $181–365$ days
+   - Churned: $>365$ days
+2. **RFM Segmentation**: Percentile-ranked Recency, Frequency, and Monetary scores (1–5) identifying **At-Risk Customers** ($R \le 2, F \ge 3$) and **Hibernating Customers** ($R \le 2, F \le 2$) for targeted retention and win-back campaigns.
+3. **Cohort Retention Decay Matrix**: 13-month tracking of customer cohort activity from acquisition month ($M_0 = 100\%$) through subsequent calendar months.
 
 ## Quick Start (Windows, PowerShell)
 ```powershell
