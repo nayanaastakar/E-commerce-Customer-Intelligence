@@ -186,77 +186,116 @@ def apply_midnight_indigo_theme():
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
-        /* Clean Streamlit Overheads */
-        header[data-testid="stHeader"] {{
-            background: transparent !important;
-            display: none !important;
-        }}
-        #MainMenu, footer {{
-            visibility: hidden !important;
-        }}
-
-        /* Make Left Sidebar Stagnant / Stationary / Docked (Non-Collapsible) */
-        [data-testid="collapsedControl"],
-        button[data-testid="stSidebarCollapseButton"],
-        button[kind="header"] {{
-            display: none !important;
-        }}
-
-        /* Global App Base - Strictly Non-Scrollable on Both Sides */
-        html, body, [data-testid="stAppViewContainer"], section.main {{
+        /* Remove ALL Outer Window Scrolls & Reset Padding */
+        html, body {{
             overflow: hidden !important;
-            overflow-y: hidden !important;
-            overflow-x: hidden !important;
             height: 100vh !important;
-            max-height: 100vh !important;
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            box-sizing: border-box !important;
         }}
 
+        [data-testid="stAppViewContainer"] {{
+            overflow: hidden !important;
+            height: 100vh !important;
+            width: 100% !important;
+        }}
+
+        /* Smooth, Clean Internal Scrolling for Main Content Area (No Outer Scrollbar!) */
+        section.main {{
+            height: 100vh !important;
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+            box-sizing: border-box !important;
+        }}
+
+        /* Sleek Slim Scrollbars */
+        ::-webkit-scrollbar {{
+            width: 5px;
+            height: 5px;
+        }}
+        ::-webkit-scrollbar-track {{
+            background: #0B1220;
+        }}
+        ::-webkit-scrollbar-thumb {{
+            background: #29384D;
+            border-radius: 4px;
+        }}
+        ::-webkit-scrollbar-thumb:hover {{
+            background: #3B82F6;
+        }}
+
+        /* Completely Hide Streamlit Chrome & Sidebar Collapse Buttons */
+        header[data-testid="stHeader"],
+        #MainMenu, footer,
+        [data-testid="stSidebarCollapseButton"],
+        [data-testid="stSidebarHeader"],
+        [data-testid="collapsedControl"],
+        button[data-testid="baseButton-headerNoPadding"],
+        button[data-testid="stSidebarCollapseButton"],
+        button[aria-label*="sidebar" i],
+        button[aria-label*="Sidebar" i],
+        button[aria-label*="collapse" i],
+        button[aria-label*="expand" i],
+        section[data-testid="stSidebar"] button[kind="header"],
+        section[data-testid="stSidebar"] header,
+        [data-testid="stSidebarNav"] {{
+            display: none !important;
+            visibility: hidden !important;
+            height: 0 !important;
+            width: 0 !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            pointer-events: none !important;
+        }}
+
+        /* Global App Base */
         .stApp {{
             background-color: {bg_canvas};
             color: {text_primary};
             font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             overflow: hidden !important;
             height: 100vh !important;
-            max-height: 100vh !important;
+            width: 100% !important;
         }}
 
-        /* Strictly Non-Scrollable Docked Sidebar */
-        [data-testid="stSidebar"],
-        [data-testid="stSidebar"] > div,
-        [data-testid="stSidebarContent"],
-        [data-testid="stSidebarUserContent"] {{
+        /* Responsive Docked Sidebar - Stagnant & Stationary */
+        [data-testid="stSidebar"] {{
             background-color: {sidebar_bg} !important;
             border-right: 1px solid {border_col} !important;
             min-width: 255px !important;
-            max-width: 255px !important;
-            overflow: hidden !important;
-            overflow-y: hidden !important;
+            max-width: 275px !important;
+            overflow-y: auto !important;
             overflow-x: hidden !important;
-            max-height: 100vh !important;
+        }}
+        [data-testid="stSidebar"]::-webkit-scrollbar {{
+            width: 4px;
+        }}
+        [data-testid="stSidebar"]::-webkit-scrollbar-thumb {{
+            background: #29384D;
+            border-radius: 4px;
         }}
         [data-testid="stSidebar"] .block-container {{
-            padding: 0.5rem 0.65rem !important;
-            max-height: 100vh !important;
-            overflow: hidden !important;
+            padding: 0.6rem 0.8rem !important;
         }}
 
-        /* Ultra-compact Content Padding for Zero-Scroll Viewport */
+        /* Ultra-clean Responsive Content Container */
         .block-container {{
-            padding-top: 0.35rem !important;
-            padding-bottom: 0.2rem !important;
+            padding-top: 0.4rem !important;
+            padding-bottom: 1.2rem !important;
             padding-left: 0.9rem !important;
             padding-right: 0.9rem !important;
             max-width: 100% !important;
-            height: 100vh !important;
             box-sizing: border-box !important;
         }}
 
         /* Reduce Vertical & Horizontal Gaps */
         div[data-testid="stVerticalBlock"] {{
-            gap: 0.25rem !important;
+            gap: 0.35rem !important;
         }}
         div[data-testid="stHorizontalBlock"] {{
-            gap: 0.4rem !important;
+            gap: 0.5rem !important;
         }}
 
         /* Sidebar High-Contrast Text */
@@ -265,28 +304,28 @@ def apply_midnight_indigo_theme():
         [data-testid="stSidebar"] p {{
             color: {text_primary} !important;
             font-weight: 500 !important;
-            font-size: 10.5px !important;
+            font-size: 11px !important;
         }}
 
         /* Section Titles in Sidebar */
         .sidebar-section-title {{
-            font-size: 9.5px;
+            font-size: 10px;
             font-weight: 700;
             letter-spacing: 0.8px;
             text-transform: uppercase;
             color: {COLOR_SECONDARY};
-            margin: 4px 0 2px 0;
+            margin: 6px 0 3px 0;
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 5px;
         }}
 
         /* Compact Widgets */
         label[data-testid="stWidgetLabel"] p {{
-            font-size: 10.5px !important;
+            font-size: 11px !important;
             font-weight: 600 !important;
             color: {text_secondary} !important;
-            margin-bottom: 1px !important;
+            margin-bottom: 2px !important;
         }}
         div[data-baseweb="select"] > div,
         div[data-baseweb="input"] > div,
@@ -294,7 +333,7 @@ def apply_midnight_indigo_theme():
             background-color: {input_bg} !important;
             border: 1px solid {border_col} !important;
             border-radius: 6px !important;
-            min-height: 28px !important;
+            min-height: 30px !important;
             transition: all 0.15s ease !important;
         }}
         div[data-baseweb="select"]:focus-within > div,
@@ -308,18 +347,18 @@ def apply_midnight_indigo_theme():
             background-color: rgba(59, 130, 246, 0.2) !important;
             border: 1px solid rgba(59, 130, 246, 0.45) !important;
             border-radius: 4px !important;
-            padding: 1px 5px !important;
+            padding: 1px 6px !important;
             color: #93C5FD !important;
-            font-size: 9.5px !important;
+            font-size: 10px !important;
             font-weight: 600 !important;
         }}
 
         /* Compact Buttons */
         .stButton > button {{
-            border-radius: 5px !important;
-            font-size: 10.5px !important;
+            border-radius: 6px !important;
+            font-size: 11px !important;
             font-weight: 600 !important;
-            padding: 3px 6px !important;
+            padding: 4px 8px !important;
             border: 1px solid {border_col} !important;
             background-color: {card_bg} !important;
             color: {text_primary} !important;
@@ -335,27 +374,30 @@ def apply_midnight_indigo_theme():
         .compact-header {{
             background-color: {card_bg};
             border: 1px solid {border_col};
-            border-radius: 7px;
-            padding: 5px 14px;
-            margin-bottom: 5px;
+            border-radius: 8px;
+            padding: 6px 14px;
+            margin-bottom: 8px;
             box-shadow: {card_shadow};
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: nowrap;
+            flex-wrap: wrap;
+            gap: 8px;
+            width: 100%;
+            box-sizing: border-box;
         }}
         .header-left {{
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }}
         .header-title-text {{
-            font-size: 14.5px;
+            font-size: 15px;
             font-weight: 800;
             color: {text_primary};
             letter-spacing: -0.3px;
             margin: 0;
-            line-height: 1.15;
+            line-height: 1.2;
         }}
         .header-tagline {{
             font-size: 10.5px;
@@ -365,11 +407,11 @@ def apply_midnight_indigo_theme():
         .header-badge {{
             display: inline-flex;
             align-items: center;
-            gap: 4px;
-            font-size: 9.5px;
+            gap: 5px;
+            font-size: 10px;
             font-weight: 700;
-            padding: 2px 7px;
-            border-radius: 10px;
+            padding: 3px 8px;
+            border-radius: 12px;
             background-color: rgba(59, 130, 246, 0.15);
             color: #60A5FA;
             border: 1px solid rgba(59, 130, 246, 0.35);
@@ -377,35 +419,49 @@ def apply_midnight_indigo_theme():
         .header-palette-pill {{
             display: inline-flex;
             align-items: center;
-            gap: 3px;
+            gap: 4px;
             background: rgba(23, 36, 56, 0.6);
-            padding: 2px 7px;
-            border-radius: 10px;
+            padding: 3px 8px;
+            border-radius: 12px;
             border: 1px solid {border_col};
         }}
         .swatch-dot {{
-            width: 7px;
-            height: 7px;
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
             display: inline-block;
         }}
 
-        /* 6 KPI Cards in Single Horizontal Row */
+        /* Fluid Responsive KPI Grid */
         .kpi-row-grid {{
             display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 6px;
-            margin-bottom: 5px;
+            grid-template-columns: repeat(6, minmax(0, 1fr));
+            gap: 8px;
+            margin-bottom: 8px;
+            width: 100%;
+            box-sizing: border-box;
+        }}
+        @media (max-width: 1380px) {{
+            .kpi-row-grid {{
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }}
+        }}
+        @media (max-width: 768px) {{
+            .kpi-row-grid {{
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }}
         }}
 
         .kpi-box {{
             background-color: {card_bg};
             border: 1px solid {border_col};
-            border-radius: 7px;
-            padding: 6px 10px;
+            border-radius: 8px;
+            padding: 8px 10px;
             box-shadow: {card_shadow};
             position: relative;
             overflow: hidden;
+            min-width: 0 !important;
+            box-sizing: border-box !important;
             transition: transform 0.15s ease;
         }}
         .kpi-box:hover {{
@@ -417,13 +473,13 @@ def apply_midnight_indigo_theme():
             top: 0;
             left: 0;
             right: 0;
-            height: 2.5px;
+            height: 3px;
         }}
         .kpi-name {{
-            font-size: 9px;
+            font-size: 9.5px;
             text-transform: uppercase;
             font-weight: 700;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.6px;
             color: {text_secondary};
             margin-bottom: 2px;
             white-space: nowrap;
@@ -431,12 +487,12 @@ def apply_midnight_indigo_theme():
             text-overflow: ellipsis;
         }}
         .kpi-number {{
-            font-size: 16.5px;
+            font-size: clamp(14px, 1.15vw, 17.5px);
             font-weight: 800;
             color: {text_primary};
             letter-spacing: -0.3px;
-            line-height: 1.1;
-            margin-bottom: 2px;
+            line-height: 1.15;
+            margin-bottom: 3px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -445,32 +501,38 @@ def apply_midnight_indigo_theme():
             display: inline-flex;
             align-items: center;
             gap: 3px;
-            font-size: 9px;
+            font-size: 9.5px;
             font-weight: 600;
-            padding: 1px 5px;
-            border-radius: 3px;
+            padding: 1px 6px;
+            border-radius: 4px;
             white-space: nowrap;
         }}
 
-        /* Compact Navigation Tabs */
+        /* Fluid Responsive Navigation Tabs */
         div[data-testid="stTabs"] [data-baseweb="tab-list"] {{
             background-color: {tab_bg} !important;
             border: 1px solid {border_col} !important;
-            border-radius: 7px !important;
-            padding: 2px !important;
-            gap: 2px !important;
-            margin-bottom: 5px !important;
+            border-radius: 8px !important;
+            padding: 3px !important;
+            gap: 3px !important;
+            margin-bottom: 6px !important;
+            display: flex !important;
+            flex-wrap: wrap !important;
+            overflow-x: auto !important;
         }}
         button[data-baseweb="tab"] {{
             color: {text_secondary} !important;
-            font-size: 11px !important;
+            font-size: clamp(10.5px, 0.8vw, 11.5px) !important;
             font-weight: 600 !important;
             padding: 4px 10px !important;
-            border-radius: 5px !important;
+            border-radius: 6px !important;
             border: none !important;
             background-color: transparent !important;
             transition: all 0.12s ease-in-out !important;
             white-space: nowrap !important;
+            flex: 1 1 auto !important;
+            text-align: center !important;
+            min-width: fit-content !important;
         }}
         button[data-baseweb="tab"]:hover {{
             color: {text_primary} !important;
@@ -488,10 +550,11 @@ def apply_midnight_indigo_theme():
         div[data-testid="stVerticalBlockBorderWrapper"] {{
             background-color: {card_bg} !important;
             border: 1px solid {border_col} !important;
-            border-radius: 7px !important;
+            border-radius: 8px !important;
             box-shadow: {card_shadow} !important;
-            padding: 6px 10px 2px 10px !important;
-            margin-bottom: 3px !important;
+            padding: 8px 12px 6px 12px !important;
+            margin-bottom: 6px !important;
+            box-sizing: border-box !important;
         }}
 
         /* Chart Header Styles */
@@ -499,35 +562,43 @@ def apply_midnight_indigo_theme():
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 2px;
-            padding-bottom: 2px;
+            margin-bottom: 3px;
+            padding-bottom: 3px;
             border-bottom: 1px solid {border_col};
         }}
         .chart-panel-title {{
-            font-size: 11.5px;
+            font-size: 12px;
             font-weight: 700;
             color: {text_primary};
             letter-spacing: -0.2px;
             margin: 0;
         }}
         .chart-panel-sub {{
-            font-size: 9.5px;
+            font-size: 10px;
             color: {text_secondary};
             font-weight: 500;
         }}
 
-        /* Inner scroll container only for detail table tabs (Tab 5 & 6) */
+        /* Table & Dataframe responsive wrappers */
+        .stDataFrame, .stTable, [data-testid="stTable"] {{
+            border-radius: 6px !important;
+            overflow-x: auto !important;
+            border: 1px solid {border_col} !important;
+            width: 100% !important;
+        }}
+
+        /* Tab panel container for detail views */
         div[data-baseweb="tab-panel"] {{
-            max-height: calc(100vh - 135px) !important;
+            max-height: calc(100vh - 120px) !important;
             overflow-y: auto !important;
             overflow-x: hidden !important;
         }}
         div[data-baseweb="tab-panel"]::-webkit-scrollbar {{
-            width: 3px;
+            width: 4px;
         }}
         div[data-baseweb="tab-panel"]::-webkit-scrollbar-thumb {{
             background: #29384D;
-            border-radius: 3px;
+            border-radius: 4px;
         }}
     </style>
     """
@@ -546,25 +617,17 @@ is_dark = True
 # Stationary Left Sidebar Header
 st.sidebar.markdown(
     """
-    <div style="padding-bottom: 6px; border-bottom: 1px solid #29384D; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
-        <div>
-            <div style="font-size: 13px; font-weight: 800; color: #F8FAFC; letter-spacing: -0.2px;">
-                ⚡ Customer Intelligence
-            </div>
-            <div style="font-size: 10px; color: #22D3EE; font-weight: 700; letter-spacing: 0.5px;">
-                ACTIVE SLICERS
-            </div>
+    <div style="padding: 2px 0 8px 0; border-bottom: 1px solid #29384D; margin-bottom: 8px;">
+        <div style="font-size: 13.5px; font-weight: 800; color: #F8FAFC; letter-spacing: -0.2px; display: flex; align-items: center; gap: 6px;">
+            <span style="color: #22D3EE;">⚡</span> Customer Intelligence
         </div>
-        <span style="font-size: 9px; font-weight: 700; color: #10B981; background: rgba(16,185,129,0.12); padding: 2px 5px; border-radius: 4px; border: 1px solid rgba(16,185,129,0.25);">
-            LOCKED
-        </span>
+        <div style="font-size: 10px; color: #94A3B8; font-weight: 600; margin-top: 1px;">
+            Interactive Filter Slicers
+        </div>
     </div>
     """,
     unsafe_allow_html=True,
 )
-
-# Slicers Header
-st.sidebar.markdown('<div class="sidebar-section-title">🔍 Dynamic Slicers</div>', unsafe_allow_html=True)
 
 # Quick Preset Buttons
 col_p1, col_p2 = st.sidebar.columns(2)
@@ -1479,7 +1542,7 @@ with tab_explorer:
             st.info(
                 f"🛒 **Invoice #{selected_inv}** | Country: **{inv_country}** | Customer ID: **{inv_cust}** | Items: **{inv_items}** | Subtotal: **£{inv_gross:,.2f}**"
             )
-            st.table(
+            st.dataframe(
                 invoice_cart[
                     ["stock_code", "description", "quantity", "unit_price", "line_value", "line_type"]
                 ].rename(
@@ -1491,7 +1554,9 @@ with tab_explorer:
                         "line_value": "Line Total (£)",
                         "line_type": "Type",
                     }
-                )
+                ),
+                use_container_width=True,
+                hide_index=True,
             )
 
 
@@ -1534,7 +1599,7 @@ with tab_audit:
                 ],
                 "Verified Fact Rows": ["536,641", "305", "4,372", "3,958", "38", "536,641"],
             }
-            st.table(pd.DataFrame(schema_data))
+            st.dataframe(pd.DataFrame(schema_data), use_container_width=True, hide_index=True)
 
         with w_col2:
             st.markdown("##### ⚖️ Python vs. SQL Star Schema Reconciliation")
@@ -1553,7 +1618,7 @@ with tab_audit:
                             "Discrepancy": "£0.00 / 0",
                         }
                     )
-                st.table(pd.DataFrame(rec_comp))
+                st.dataframe(pd.DataFrame(rec_comp), use_container_width=True, hide_index=True)
             else:
                 st.info("Run `python scripts/reconcile_sql.py` to regenerate database audit logs.")
 
