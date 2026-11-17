@@ -186,7 +186,7 @@ def apply_midnight_indigo_theme():
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
-        /* Remove ALL Outer Window Scrolls & Reset Padding */
+        /* Remove ALL Outer & Inner Scrolls - Completely Non-Scrollable */
         html, body {{
             overflow: hidden !important;
             height: 100vh !important;
@@ -202,28 +202,22 @@ def apply_midnight_indigo_theme():
             width: 100% !important;
         }}
 
-        /* Smooth, Clean Internal Scrolling for Main Content Area (No Outer Scrollbar!) */
+        /* Strictly non-scrollable main content area */
         section.main {{
             height: 100vh !important;
-            overflow-y: auto !important;
-            overflow-x: hidden !important;
+            overflow: hidden !important;
             box-sizing: border-box !important;
         }}
 
-        /* Sleek Slim Scrollbars */
+        /* Hide ALL scrollbars everywhere */
         ::-webkit-scrollbar {{
-            width: 5px;
-            height: 5px;
+            display: none !important;
+            width: 0 !important;
+            height: 0 !important;
         }}
-        ::-webkit-scrollbar-track {{
-            background: #0B1220;
-        }}
-        ::-webkit-scrollbar-thumb {{
-            background: #29384D;
-            border-radius: 4px;
-        }}
-        ::-webkit-scrollbar-thumb:hover {{
-            background: #3B82F6;
+        * {{
+            scrollbar-width: none !important;
+            -ms-overflow-style: none !important;
         }}
 
         /* Completely Hide Streamlit Chrome & Sidebar Collapse Buttons */
@@ -579,26 +573,25 @@ def apply_midnight_indigo_theme():
             font-weight: 500;
         }}
 
-        /* Table & Dataframe responsive wrappers */
+        /* Table & Dataframe responsive wrappers - no internal scrollbars */
         .stDataFrame, .stTable, [data-testid="stTable"] {{
             border-radius: 6px !important;
-            overflow-x: auto !important;
+            overflow: hidden !important;
             border: 1px solid {border_col} !important;
             width: 100% !important;
         }}
+        /* Suppress Streamlit dataframe inner scrollbars */
+        [data-testid="stDataFrame"] > div {{
+            overflow: hidden !important;
+        }}
+        [data-testid="stDataFrame"] iframe {{
+            overflow: hidden !important;
+        }}
 
-        /* Tab panel container for detail views */
+        /* Tab panel container - no scroll on any tab */
         div[data-baseweb="tab-panel"] {{
+            overflow: hidden !important;
             max-height: calc(100vh - 120px) !important;
-            overflow-y: auto !important;
-            overflow-x: hidden !important;
-        }}
-        div[data-baseweb="tab-panel"]::-webkit-scrollbar {{
-            width: 4px;
-        }}
-        div[data-baseweb="tab-panel"]::-webkit-scrollbar-thumb {{
-            background: #29384D;
-            border-radius: 4px;
         }}
     </style>
     """
@@ -1137,7 +1130,7 @@ with tab_retention:
             text_auto=".1f",
             template=plotly_template,
         )
-        style_figure(fig_cohort, height=440)
+        style_figure(fig_cohort, height=360)
         st.plotly_chart(fig_cohort, use_container_width=True)
 
     c_col1, c_col2 = st.columns(2)
@@ -1167,7 +1160,7 @@ with tab_retention:
             )
             fig_sizes.update_traces(marker_color=size_colors, opacity=0.9)
             fig_sizes.update_layout(showlegend=False)
-            style_figure(fig_sizes, height=270)
+            style_figure(fig_sizes, height=215)
             st.plotly_chart(fig_sizes, use_container_width=True)
 
     with c_col2:
@@ -1199,7 +1192,7 @@ with tab_retention:
                 template=plotly_template,
                 aspect="auto",
             )
-            style_figure(fig_cadence, height=270)
+            style_figure(fig_cadence, height=215)
             st.plotly_chart(fig_cadence, use_container_width=True)
 
 
@@ -1244,7 +1237,7 @@ with tab_rfm:
                 template=plotly_template,
             )
             fig_donut.update_traces(textinfo="percent+label", textposition="inside")
-            style_figure(fig_donut, height=270)
+            style_figure(fig_donut, height=215)
             st.plotly_chart(fig_donut, use_container_width=True)
 
         with r_col2:
@@ -1261,7 +1254,7 @@ with tab_rfm:
                 template=plotly_template,
             )
             fig_scatter.update_traces(marker=dict(line=dict(width=0.6, color="#0B1220"), opacity=0.85))
-            style_figure(fig_scatter, height=270)
+            style_figure(fig_scatter, height=215)
             st.plotly_chart(fig_scatter, use_container_width=True)
 
     with st.container(border=True):
@@ -1295,21 +1288,64 @@ with tab_rfm:
             )
             fig_bands.update_traces(opacity=0.9)
             fig_bands.update_layout(showlegend=False, xaxis_title="Inactivity Band", yaxis_title="Customers")
-            style_figure(fig_bands, height=260)
+            style_figure(fig_bands, height=210)
             st.plotly_chart(fig_bands, use_container_width=True)
 
         with p2:
             st.markdown(
                 f"""
-                | Segment | Customers | Strategy & Actionable Playbook | Primary Channel |
-                |---|---|---|---|
-                | **Champions** | 1,118 | VIP loyalty perks, exclusive early access, dedicated support | Direct Concierge & Email |
-                | **Loyal Customers** | 327 | Upsell cross-category bundles, referral incentives | Email & In-App Perks |
-                | **Potential Loyalists** | 680 | Incentivize 3rd/4th order with tiered discount hurdles | Automated Push & Retargeting |
-                | **Recent Customers** | 310 | Onboarding drip sequence, welcome discount on second cart | Welcome Journey Email |
-                | **At-Risk Customers** | 663 | Personalized re-activation offer before customer becomes dormant | High-Priority Win-Back SMS/Email |
-                | **Hibernating Customers** | 1,073 | Low-cost clearance campaigns, opt-out survey checks | Periodic Discount Newsletter |
-                """
+                <div style="font-size:11px; line-height:1.3; overflow:hidden;">
+                <table style="width:100%; border-collapse:collapse; color:#F8FAFC; font-size:10.5px;">
+                  <thead>
+                    <tr style="border-bottom:1px solid #29384D;">
+                      <th style="text-align:left; padding:4px 6px; color:#94A3B8; font-weight:700; white-space:nowrap;">Segment</th>
+                      <th style="text-align:center; padding:4px 6px; color:#94A3B8; font-weight:700;">Custs</th>
+                      <th style="text-align:left; padding:4px 6px; color:#94A3B8; font-weight:700;">Strategy</th>
+                      <th style="text-align:left; padding:4px 6px; color:#94A3B8; font-weight:700; white-space:nowrap;">Channel</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr style="border-bottom:1px solid #1a2840;">
+                      <td style="padding:4px 6px; font-weight:700; color:#22D3EE; white-space:nowrap;">Champions</td>
+                      <td style="padding:4px 6px; text-align:center;">1,118</td>
+                      <td style="padding:4px 6px;">VIP loyalty perks, exclusive early access</td>
+                      <td style="padding:4px 6px; white-space:nowrap;">Concierge & Email</td>
+                    </tr>
+                    <tr style="border-bottom:1px solid #1a2840;">
+                      <td style="padding:4px 6px; font-weight:700; color:#3B82F6; white-space:nowrap;">Loyal Customers</td>
+                      <td style="padding:4px 6px; text-align:center;">327</td>
+                      <td style="padding:4px 6px;">Upsell bundles, referral incentives</td>
+                      <td style="padding:4px 6px; white-space:nowrap;">Email & In-App</td>
+                    </tr>
+                    <tr style="border-bottom:1px solid #1a2840;">
+                      <td style="padding:4px 6px; font-weight:700; color:#6366F1; white-space:nowrap;">Potential Loyalists</td>
+                      <td style="padding:4px 6px; text-align:center;">680</td>
+                      <td style="padding:4px 6px;">3rd/4th order tiered discount hurdles</td>
+                      <td style="padding:4px 6px; white-space:nowrap;">Push & Retargeting</td>
+                    </tr>
+                    <tr style="border-bottom:1px solid #1a2840;">
+                      <td style="padding:4px 6px; font-weight:700; color:#10B981; white-space:nowrap;">Recent Customers</td>
+                      <td style="padding:4px 6px; text-align:center;">310</td>
+                      <td style="padding:4px 6px;">Onboarding drip, welcome discount</td>
+                      <td style="padding:4px 6px; white-space:nowrap;">Welcome Email</td>
+                    </tr>
+                    <tr style="border-bottom:1px solid #1a2840;">
+                      <td style="padding:4px 6px; font-weight:700; color:#F59E0B; white-space:nowrap;">At-Risk Customers</td>
+                      <td style="padding:4px 6px; text-align:center;">663</td>
+                      <td style="padding:4px 6px;">Re-activation offer before dormancy</td>
+                      <td style="padding:4px 6px; white-space:nowrap;">SMS / Email</td>
+                    </tr>
+                    <tr>
+                      <td style="padding:4px 6px; font-weight:700; color:#F87171; white-space:nowrap;">Hibernating</td>
+                      <td style="padding:4px 6px; text-align:center;">1,073</td>
+                      <td style="padding:4px 6px;">Clearance campaigns, opt-out survey</td>
+                      <td style="padding:4px 6px; white-space:nowrap;">Discount Newsletter</td>
+                    </tr>
+                  </tbody>
+                </table>
+                </div>
+                """,
+                unsafe_allow_html=True,
             )
 
             at_risk_list = rfm_df[rfm_df["segment"] == "At-Risk Customers"][
