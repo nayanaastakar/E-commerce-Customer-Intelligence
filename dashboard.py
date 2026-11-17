@@ -2,8 +2,8 @@
 E-Commerce Customer Retention & Churn Analytics Platform
 Executive Interactive Business Intelligence Dashboard
 Built with Streamlit, Plotly, Pandas, and MySQL 8.0 Star Schema Data Warehouse.
-Theme: Frozen Mist (Cinnamon & Slate Palette)
-Palette: #7C7D75 (Slate), #ADACA7 (Stone), #FCF8D8 (Soft Cream), #D9DADF (Mist), #DD700B (Cinnamon)
+Theme: Midnight Indigo & Electric Blue
+Single-Screen Viewport Optimized Layout (Zero Vertical Scroll on 1080p/900p Desktop)
 """
 
 import io
@@ -26,7 +26,7 @@ log = logging.getLogger("dashboard")
 # Page Configuration
 st.set_page_config(
     page_title="E-Commerce Customer Intelligence & Retention Platform",
-    page_icon="❄️",
+    page_icon="⚡",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -37,33 +37,39 @@ EXPORTS_DIR = ROOT / "exports"
 REPORTS_DIR = ROOT / "reports"
 
 # -----------------------------------------------------------------------------
-# 1. COLOR SYSTEM (FROZEN MIST PALETTE SPECIFICATION)
+# 1. COLOR SYSTEM (MIDNIGHT INDIGO + ELECTRIC BLUE SPECIFICATION)
 # -----------------------------------------------------------------------------
-COLOR_CINNAMON = "#DD700B"   # Vibrant Cinnamon Orange (Primary Focus & Accent)
-COLOR_GRAPHITE = "#7C7D75"   # Slate Gray (Secondary Structural Metric)
-COLOR_STONE = "#ADACA7"      # Warm Stone Gray (Supporting & Subdued Elements)
-COLOR_CREAM = "#FCF8D8"      # Soft Pale Cream / Warm Ivory (Highlights & Warmth)
-COLOR_MIST = "#D9DADF"       # Cool Mist Light Gray (Dividers & Subtle Borders)
+COLOR_PRIMARY = "#3B82F6"      # Electric Blue (Primary Action & Net Sales)
+COLOR_SECONDARY = "#22D3EE"    # Cyan (Secondary Accent & Growth Dynamics)
+COLOR_SUCCESS = "#10B981"      # Emerald Green (Repeat Purchase & Retention)
+COLOR_WARNING = "#F59E0B"      # Amber (At-Risk & Lapsing Indicators)
+COLOR_DANGER = "#F87171"       # Coral Red (Returns, Churn & Critical Risk)
+COLOR_INDIGO = "#818CF8"       # Indigo Accent
+COLOR_MUTED = "#94A3B8"        # Muted Slate (Labels & Axes)
+COLOR_BORDER = "#29384D"       # Subtle Blue-Grey Border
+COLOR_BG_CARD = "#172438"      # Card Container Navy
+COLOR_BG_DARK = "#0B1220"      # Deep Midnight Navy Canvas
+COLOR_BG_SIDEBAR = "#111B2D"   # Sidebar Dark Navy
 
-# Heatmap Gradient Scale (Low baseline cream -> Cool Mist -> Stone -> Slate -> Peak Cinnamon)
-FROZEN_MIST_HEATMAP = [
-    [0.0, "#FCF8D8"],   # Soft Warm Cream (Baseline / Low)
-    [0.2, "#D9DADF"],   # Cool Mist Gray
-    [0.45, "#ADACA7"],  # Warm Stone Gray
-    [0.72, "#7C7D75"],  # Slate Gray
-    [1.0, "#DD700B"],   # Vibrant Cinnamon (Peak retention)
+# Heatmap Gradient Scale for Cohort Retention Matrix
+MIDNIGHT_HEATMAP = [
+    [0.0, "#172438"],   # Base Card Navy (Low/0%)
+    [0.2, "#1E3A8A"],   # Deep Blue
+    [0.45, "#2563EB"],  # Royal Blue
+    [0.72, "#3B82F6"],  # Electric Blue
+    [1.0, "#22D3EE"],   # Vibrant Cyan (Peak Retention)
 ]
 
-# Semantic Customer Segment Mapping within Frozen Mist Palette
+# Semantic Customer Segment Mapping within Midnight Indigo Palette
 SEGMENT_COLORS = {
-    "Champions": "#DD700B",          # Vibrant Cinnamon
-    "Loyal Customers": "#7C7D75",    # Graphite Slate
-    "Potential Loyalists": "#ADACA7",# Warm Stone
-    "Recent Customers": "#9C9B94",   # Light Stone
-    "At-Risk Customers": "#C86408",  # Amber Cinnamon
-    "Hibernating Customers": "#52544F", # Deep Slate
-    "Other Customers": "#858680",    # Neutral Slate
-    "Guest / Unregistered": "#D9DADF", # Cool Mist
+    "Champions": "#3B82F6",            # Electric Blue
+    "Loyal Customers": "#22D3EE",      # Cyan
+    "Potential Loyalists": "#818CF8",  # Soft Indigo
+    "Recent Customers": "#94A3B8",     # Muted Slate
+    "At-Risk Customers": "#F59E0B",    # Amber
+    "Hibernating Customers": "#F87171",# Coral Red
+    "Other Customers": "#64748B",      # Slate Neutral
+    "Guest / Unregistered": "#334155", # Dark Slate
 }
 
 
@@ -149,50 +155,38 @@ def load_all_datasets():
     return trans_df, rfm_df, monthly_df, cohort_pct_df, cohort_counts_df, dq_report, audit_report
 
 
-with st.spinner("Connecting to warehouse and loading Frozen Mist data marts..."):
+with st.spinner("Connecting to warehouse and loading data marts..."):
     trans_df, rfm_df, monthly_df, cohort_pct_df, cohort_counts_df, dq_report, audit_report = (
         load_all_datasets()
     )
 
 
 # -----------------------------------------------------------------------------
-# 3. ADVANCED THEME INJECTION & CSS ARCHITECTURE
+# 3. THEME INJECTION & SINGLE-SCREEN VIEWPORT OPTIMIZATION
 # -----------------------------------------------------------------------------
 
-def apply_frozen_mist_theme(theme_choice: str):
+def apply_midnight_indigo_theme():
     """
-    Inject high-end, commercial-grade CSS styling applying the Frozen Mist palette.
-    Replaces harsh grays and sterile whites with balanced warm off-white and soft cream surfaces.
+    Inject custom CSS implementing Midnight Indigo & Electric Blue.
+    Engineered with ultra-tight viewport spacing to fit on a single desktop screen.
+    Permanently locks the left sidebar stationary/stagnant.
     """
-    if "Dark" in theme_choice:
-        bg_canvas = "#17181A"
-        card_bg = "#212326"
-        border_color = "#36383D"
-        border_subtle = "#2E3034"
-        text_primary = "#FCF8D8"      # Pale cream on dark
-        text_secondary = "#ADACA7"    # Warm stone gray
-        sidebar_bg = "#1B1C1E"
-        card_shadow = "0 4px 16px rgba(0, 0, 0, 0.45)"
-        tab_active_bg = "rgba(221, 112, 11, 0.16)"
-        tab_active_border = COLOR_CINNAMON
-    else:
-        # Elegant Light Mode: Soft ivory canvas, pure crisp cards, refined borders
-        bg_canvas = "#FAF9F5"          # Warm off-white / soft cream canvas
-        card_bg = "#FFFFFF"            # Crisp white card surface
-        border_color = "#E8E6DF"        # Warm stone/mist border
-        border_subtle = "#F0EFEA"      # Very faint separator
-        text_primary = "#282926"        # Deep graphite charcoal
-        text_secondary = "#6F716A"      # Slate graphite
-        sidebar_bg = "#F4F3EE"          # Sophisticated soft cream sidebar
-        card_shadow = "0 1px 3px rgba(0, 0, 0, 0.03), 0 4px 12px rgba(124, 125, 117, 0.05)"
-        tab_active_bg = "#FFFFFF"
-        tab_active_border = COLOR_CINNAMON
+    bg_canvas = COLOR_BG_DARK       # #0B1220
+    card_bg = COLOR_BG_CARD         # #172438
+    sidebar_bg = COLOR_BG_SIDEBAR   # #111B2D
+    border_col = COLOR_BORDER       # #29384D
+    text_primary = "#F8FAFC"
+    text_secondary = COLOR_MUTED    # #94A3B8
+    input_bg = "#0D1626"
+    tab_bg = "#111B2D"
+    tab_active_bg = "#172438"
+    card_shadow = "0 2px 8px rgba(0, 0, 0, 0.35)"
 
     css = f"""
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
-        /* Hide unwanted default Streamlit chrome */
+        /* Clean Streamlit Overheads */
         header[data-testid="stHeader"] {{
             background: transparent !important;
             display: none !important;
@@ -201,32 +195,42 @@ def apply_frozen_mist_theme(theme_choice: str):
             visibility: hidden !important;
         }}
 
+        /* Make Left Sidebar Stagnant / Stationary / Docked (Non-Collapsible) */
+        [data-testid="collapsedControl"],
+        button[data-testid="stSidebarCollapseButton"],
+        button[kind="header"] {{
+            display: none !important;
+        }}
+
         /* Global App Base */
         .stApp {{
             background-color: {bg_canvas};
             color: {text_primary};
             font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            overflow-x: hidden;
         }}
 
-        /* Content Container Max-width and Balanced Margins */
+        /* Ultra-compact Content Padding for Zero-Scroll Viewport */
         .block-container {{
-            padding-top: 1.2rem !important;
-            padding-bottom: 2.5rem !important;
-            padding-left: 1.8rem !important;
-            padding-right: 1.8rem !important;
-            max-width: 1520px !important;
+            padding-top: 0.6rem !important;
+            padding-bottom: 0.8rem !important;
+            padding-left: 1.2rem !important;
+            padding-right: 1.2rem !important;
+            max-width: 100% !important;
         }}
 
-        /* Clean Sidebar Design */
+        /* Stagnant Docked Sidebar */
         [data-testid="stSidebar"] {{
-            background-color: {sidebar_bg};
-            border-right: 1px solid {border_color};
+            background-color: {sidebar_bg} !important;
+            border-right: 1px solid {border_col} !important;
+            min-width: 265px !important;
+            max-width: 265px !important;
         }}
         [data-testid="stSidebar"] .block-container {{
-            padding: 1.25rem 1rem !important;
+            padding: 0.75rem 0.8rem !important;
         }}
 
-        /* Sidebar Typography & High-Contrast Labels */
+        /* Sidebar High-Contrast Text */
         [data-testid="stSidebar"] label,
         [data-testid="stSidebar"] span,
         [data-testid="stSidebar"] p,
@@ -234,292 +238,268 @@ def apply_frozen_mist_theme(theme_choice: str):
         [data-testid="stSidebar"] div[role="radiogroup"] span {{
             color: {text_primary} !important;
             font-weight: 500 !important;
+            font-size: 11px !important;
         }}
         [data-testid="stSidebar"] div[role="radiogroup"] label {{
-            margin-bottom: 6px !important;
+            margin-bottom: 3px !important;
         }}
 
-        /* Sidebar Section Titles & Spacing */
+        /* Section Titles in Sidebar */
         .sidebar-section-title {{
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 700;
             letter-spacing: 0.8px;
             text-transform: uppercase;
-            color: {COLOR_GRAPHITE};
-            margin: 16px 0 8px 0;
+            color: {COLOR_SECONDARY};
+            margin: 8px 0 4px 0;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
         }}
 
-        /* Widget Labels */
+        /* Compact Widgets */
         label[data-testid="stWidgetLabel"] p {{
-            font-size: 12px !important;
+            font-size: 11px !important;
             font-weight: 600 !important;
-            color: {text_primary} !important;
-            margin-bottom: 4px !important;
+            color: {text_secondary} !important;
+            margin-bottom: 2px !important;
         }}
-
-        /* Filter Controls (Sleek, Modern, Compact) */
         div[data-baseweb="select"] > div,
         div[data-baseweb="input"] > div,
         div[data-baseweb="base-input"] {{
-            background-color: {card_bg} !important;
-            border: 1px solid {border_color} !important;
-            border-radius: 8px !important;
-            min-height: 36px !important;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.02) !important;
+            background-color: {input_bg} !important;
+            border: 1px solid {border_col} !important;
+            border-radius: 6px !important;
+            min-height: 32px !important;
             transition: all 0.15s ease !important;
-        }}
-        div[data-baseweb="select"] > div:hover,
-        div[data-baseweb="input"] > div:hover {{
-            border-color: {COLOR_STONE} !important;
         }}
         div[data-baseweb="select"]:focus-within > div,
         div[data-baseweb="input"]:focus-within > div {{
-            border-color: {COLOR_CINNAMON} !important;
-            box-shadow: 0 0 0 3px rgba(221, 112, 11, 0.14) !important;
+            border-color: {COLOR_PRIMARY} !important;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25) !important;
         }}
 
-        /* Multiselect Tag Chips (Warm Cream & Subtle Border) */
+        /* Multiselect Tag Chips */
         span[data-baseweb="tag"] {{
-            background-color: {COLOR_CREAM} !important;
-            border: 1px solid rgba(173, 172, 167, 0.5) !important;
-            border-radius: 6px !important;
-            padding: 2px 7px !important;
-            color: #383A35 !important;
-            font-size: 11.5px !important;
+            background-color: rgba(59, 130, 246, 0.2) !important;
+            border: 1px solid rgba(59, 130, 246, 0.45) !important;
+            border-radius: 4px !important;
+            padding: 1px 6px !important;
+            color: #93C5FD !important;
+            font-size: 10px !important;
             font-weight: 600 !important;
         }}
-        span[data-baseweb="tag"] span {{
-            color: #383A35 !important;
-        }}
 
-        /* Slider Handle & Track */
-        div[data-testid="stSlider"] [role="slider"] {{
-            background-color: {COLOR_CINNAMON} !important;
-            border: 2px solid #FFFFFF !important;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.15) !important;
-        }}
-
-        /* Buttons (Preset Buttons & Reset) */
+        /* Compact Buttons */
         .stButton > button {{
-            border-radius: 8px !important;
-            font-size: 12.5px !important;
+            border-radius: 6px !important;
+            font-size: 11px !important;
             font-weight: 600 !important;
-            padding: 6px 12px !important;
-            border: 1px solid {border_color} !important;
+            padding: 4px 8px !important;
+            border: 1px solid {border_col} !important;
             background-color: {card_bg} !important;
             color: {text_primary} !important;
             transition: all 0.15s ease !important;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.03) !important;
         }}
         .stButton > button:hover {{
-            border-color: {COLOR_CINNAMON} !important;
-            color: {COLOR_CINNAMON} !important;
-            background-color: rgba(221, 112, 11, 0.04) !important;
-            transform: translateY(-1px) !important;
+            border-color: {COLOR_PRIMARY} !important;
+            color: {COLOR_PRIMARY} !important;
+            background-color: rgba(59, 130, 246, 0.1) !important;
         }}
 
-        /* Executive Header Container */
-        .header-container {{
+        /* Compact Header Bar */
+        .compact-header {{
             background-color: {card_bg};
-            border: 1px solid {border_color};
-            border-radius: 12px;
-            padding: 16px 22px;
-            margin-bottom: 18px;
+            border: 1px solid {border_col};
+            border-radius: 8px;
+            padding: 7px 16px;
+            margin-bottom: 8px;
             box-shadow: {card_shadow};
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 16px;
+            flex-wrap: nowrap;
         }}
-        .header-title {{
-            font-size: 20px;
-            font-weight: 800;
-            color: {text_primary};
-            letter-spacing: -0.4px;
-            margin: 0;
+        .header-left {{
             display: flex;
             align-items: center;
             gap: 10px;
         }}
-        .header-subtitle {{
-            font-size: 12px;
+        .header-title-text {{
+            font-size: 16px;
+            font-weight: 800;
+            color: {text_primary};
+            letter-spacing: -0.3px;
+            margin: 0;
+            line-height: 1.2;
+        }}
+        .header-tagline {{
+            font-size: 11px;
             color: {text_secondary};
-            margin-top: 3px;
             font-weight: 500;
         }}
         .header-badge {{
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            font-size: 11px;
+            gap: 5px;
+            font-size: 10px;
             font-weight: 700;
-            padding: 4px 10px;
-            border-radius: 20px;
-            background-color: rgba(221, 112, 11, 0.08);
-            color: {COLOR_CINNAMON};
-            border: 1px solid rgba(221, 112, 11, 0.2);
+            padding: 3px 8px;
+            border-radius: 12px;
+            background-color: rgba(59, 130, 246, 0.15);
+            color: #60A5FA;
+            border: 1px solid rgba(59, 130, 246, 0.35);
         }}
-        .header-palette-box {{
+        .header-palette-pill {{
             display: inline-flex;
             align-items: center;
-            gap: 5px;
-            background: rgba(124, 125, 117, 0.06);
-            padding: 4px 10px;
-            border-radius: 20px;
-            border: 1px solid {border_color};
+            gap: 4px;
+            background: rgba(23, 36, 56, 0.6);
+            padding: 3px 8px;
+            border-radius: 12px;
+            border: 1px solid {border_col};
         }}
-        .header-swatch {{
-            width: 10px;
-            height: 10px;
+        .swatch-dot {{
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
             display: inline-block;
-            border: 1px solid rgba(0,0,0,0.1);
         }}
 
-        /* Responsive KPI Cards Grid */
-        .kpi-grid {{
+        /* 6 KPI Cards in Single Horizontal Row */
+        .kpi-row-grid {{
             display: grid;
             grid-template-columns: repeat(6, 1fr);
-            gap: 12px;
-            margin-bottom: 18px;
+            gap: 8px;
+            margin-bottom: 8px;
         }}
         @media (max-width: 1280px) {{
-            .kpi-grid {{
+            .kpi-row-grid {{
                 grid-template-columns: repeat(3, 1fr);
             }}
         }}
         @media (max-width: 768px) {{
-            .kpi-grid {{
+            .kpi-row-grid {{
                 grid-template-columns: repeat(2, 1fr);
             }}
         }}
 
-        .kpi-card {{
+        .kpi-box {{
             background-color: {card_bg};
-            border: 1px solid {border_color};
-            border-radius: 10px;
-            padding: 14px 16px;
+            border: 1px solid {border_col};
+            border-radius: 8px;
+            padding: 8px 12px;
             box-shadow: {card_shadow};
             position: relative;
             overflow: hidden;
-            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            transition: transform 0.15s ease;
         }}
-        .kpi-card:hover {{
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(124, 125, 117, 0.08);
-            border-color: {COLOR_STONE};
+        .kpi-box:hover {{
+            transform: translateY(-1px);
+            border-color: {COLOR_PRIMARY};
         }}
-        .kpi-accent-top {{
+        .kpi-top-bar {{
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
             height: 3px;
         }}
-        .kpi-label {{
-            font-size: 10.5px;
+        .kpi-name {{
+            font-size: 9.5px;
             text-transform: uppercase;
             font-weight: 700;
             letter-spacing: 0.6px;
             color: {text_secondary};
-            margin-bottom: 5px;
+            margin-bottom: 2px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }}
-        .kpi-val {{
-            font-size: 20px;
+        .kpi-number {{
+            font-size: 18px;
             font-weight: 800;
             color: {text_primary};
             letter-spacing: -0.3px;
             line-height: 1.15;
-            margin-bottom: 6px;
+            margin-bottom: 3px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }}
-        .kpi-pill {{
+        .kpi-pill-tag {{
             display: inline-flex;
             align-items: center;
-            gap: 4px;
-            font-size: 10.5px;
+            gap: 3px;
+            font-size: 9.5px;
             font-weight: 600;
-            padding: 2px 7px;
-            border-radius: 5px;
+            padding: 1px 6px;
+            border-radius: 4px;
             white-space: nowrap;
         }}
-        .pill-cinnamon {{
-            background-color: rgba(221, 112, 11, 0.1);
-            color: {COLOR_CINNAMON};
-            border: 1px solid rgba(221, 112, 11, 0.2);
-        }}
-        .pill-cream {{
-            background-color: {COLOR_CREAM};
-            color: #4B4C46;
-            border: 1px solid #E6E3C8;
-        }}
-        .pill-slate {{
-            background-color: rgba(124, 125, 117, 0.1);
-            color: {COLOR_GRAPHITE};
-            border: 1px solid rgba(124, 125, 117, 0.2);
-        }}
-        .pill-mist {{
-            background-color: {COLOR_MIST};
-            color: {text_primary};
-        }}
 
-        /* Navigation Tabs (High Contrast, Crisp Active State) */
+        /* Compact Navigation Tabs */
         div[data-testid="stTabs"] [data-baseweb="tab-list"] {{
-            background-color: {card_bg} !important;
-            border: 1px solid {border_color} !important;
-            border-radius: 10px !important;
-            padding: 4px !important;
+            background-color: {tab_bg} !important;
+            border: 1px solid {border_col} !important;
+            border-radius: 8px !important;
+            padding: 3px !important;
             gap: 2px !important;
-            margin-bottom: 18px !important;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.03) !important;
+            margin-bottom: 8px !important;
         }}
         button[data-baseweb="tab"] {{
             color: {text_secondary} !important;
-            font-size: 13px !important;
+            font-size: 11.5px !important;
             font-weight: 600 !important;
-            padding: 7px 15px !important;
-            border-radius: 7px !important;
+            padding: 5px 12px !important;
+            border-radius: 6px !important;
             border: none !important;
             background-color: transparent !important;
-            transition: all 0.15s ease-in-out !important;
+            transition: all 0.12s ease-in-out !important;
             white-space: nowrap !important;
         }}
         button[data-baseweb="tab"]:hover {{
-            color: {COLOR_CINNAMON} !important;
-            background-color: rgba(221, 112, 11, 0.05) !important;
+            color: {text_primary} !important;
+            background-color: rgba(59, 130, 246, 0.12) !important;
         }}
         button[data-baseweb="tab"][aria-selected="true"] {{
-            color: {COLOR_CINNAMON} !important;
+            color: {text_primary} !important;
             background-color: {tab_active_bg} !important;
             font-weight: 700 !important;
-            box-shadow: 0 2px 6px rgba(124, 125, 117, 0.1) !important;
-            border-bottom: 2.5px solid {tab_active_border} !important;
+            border-bottom: 2px solid {COLOR_PRIMARY} !important;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.2) !important;
         }}
 
-        /* Modern Card Containers using Streamlit border=True */
+        /* Viewport Container Cards for Visualizations */
         div[data-testid="stVerticalBlockBorderWrapper"] {{
             background-color: {card_bg} !important;
-            border: 1px solid {border_color} !important;
-            border-radius: 12px !important;
+            border: 1px solid {border_col} !important;
+            border-radius: 8px !important;
             box-shadow: {card_shadow} !important;
-            padding: 16px 18px 12px 18px !important;
-            margin-bottom: 16px !important;
+            padding: 8px 12px 4px 12px !important;
+            margin-bottom: 6px !important;
         }}
 
-        /* Tables & Dataframes */
-        .stDataFrame, .stTable {{
-            border-radius: 8px !important;
-            overflow: hidden !important;
-            border: 1px solid {border_color} !important;
+        /* Chart Header Styles */
+        .chart-panel-header {{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+            padding-bottom: 3px;
+            border-bottom: 1px solid {border_col};
+        }}
+        .chart-panel-title {{
+            font-size: 12.5px;
+            font-weight: 700;
+            color: {text_primary};
+            letter-spacing: -0.2px;
+            margin: 0;
+        }}
+        .chart-panel-sub {{
+            font-size: 10px;
+            color: {text_secondary};
+            font-weight: 500;
         }}
     </style>
     """
@@ -530,30 +510,30 @@ def apply_frozen_mist_theme(theme_choice: str):
 # 4. SIDEBAR CONTROLS & DYNAMIC SLICERS
 # -----------------------------------------------------------------------------
 
-# Theme Selection
+# Apply Midnight Indigo Theme (Stagnant Left Section)
+apply_midnight_indigo_theme()
+plotly_template = "plotly_dark"
+is_dark = True
+
+# Stationary Left Sidebar Header
 st.sidebar.markdown(
     """
-    <div style="padding-bottom: 6px; border-bottom: 1px solid #E5E3DB; margin-bottom: 12px;">
-        <div style="font-size: 14.5px; font-weight: 800; color: #282926; letter-spacing: -0.2px;">
-            🛒 Customer Intelligence
+    <div style="padding-bottom: 6px; border-bottom: 1px solid #29384D; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <div style="font-size: 13px; font-weight: 800; color: #F8FAFC; letter-spacing: -0.2px;">
+                ⚡ Customer Intelligence
+            </div>
+            <div style="font-size: 10px; color: #22D3EE; font-weight: 700; letter-spacing: 0.5px;">
+                ACTIVE SLICERS
+            </div>
         </div>
-        <div style="font-size: 11.5px; color: #7C7D75; font-weight: 500;">
-            Frozen Mist Executive Suite
-        </div>
+        <span style="font-size: 9px; font-weight: 700; color: #10B981; background: rgba(16,185,129,0.12); padding: 2px 5px; border-radius: 4px; border: 1px solid rgba(16,185,129,0.25);">
+            LOCKED
+        </span>
     </div>
     """,
     unsafe_allow_html=True,
 )
-
-theme_mode = st.sidebar.radio(
-    "Select Display Mode",
-    ["❄️ Frozen Mist Light", "🌙 Frozen Mist Dark"],
-    index=0,
-    label_visibility="collapsed",
-)
-is_dark = "Dark" in theme_mode
-apply_frozen_mist_theme(theme_mode)
-plotly_template = "plotly_dark" if is_dark else "plotly_white"
 
 # Slicers Header
 st.sidebar.markdown('<div class="sidebar-section-title">🔍 Dynamic Slicers</div>', unsafe_allow_html=True)
@@ -642,20 +622,6 @@ min_order_val = st.sidebar.slider(
 if st.sidebar.button("🔄 Reset All Filters", use_container_width=True):
     st.rerun()
 
-st.sidebar.markdown("---")
-st.sidebar.markdown(
-    f"""
-    <div style="font-size: 11px; color: {COLOR_GRAPHITE}; font-weight: 600; line-height: 1.6;">
-        <span style="color: {COLOR_CINNAMON};">●</span> Cinnamon Focus (#DD700B)<br>
-        <span style="color: {COLOR_GRAPHITE};">●</span> Slate Structure (#7C7D75)<br>
-        <span style="color: {COLOR_STONE};">●</span> Stone Neutral (#ADACA7)<br>
-        <span style="color: {COLOR_MIST};">●</span> Mist Boundary (#D9DADF)<br>
-        <span style="color: #CFCBA8;">●</span> Soft Ivory Base (#FCF8D8)
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
-
 
 # -----------------------------------------------------------------------------
 # 5. FILTER EXECUTION & DYNAMIC RECALCULATION
@@ -719,30 +685,29 @@ churn_risk_pct = (at_risk_count / active_cust_count * 100) if active_cust_count 
 
 
 # -----------------------------------------------------------------------------
-# 6. DASHBOARD HEADER & KPI CARDS
+# 6. COMPACT HEADER & 6 HORIZONTAL KPI CARDS
 # -----------------------------------------------------------------------------
 
-def render_header():
-    """Render executive header with Frozen Mist palette indicators."""
+def render_compact_header():
+    """Render ultra-compact executive navbar."""
     st.markdown(
         f"""
-        <div class="header-container">
-            <div>
-                <h1 class="header-title">
-                    <span>🛒 E-Commerce Customer Retention & Churn Analytics</span>
-                </h1>
-                <div class="header-subtitle">
-                    Frozen Mist Edition • Python ETL → MySQL 8.0 Star Schema → RFM Segmentation & Cohort Decay Engine
+        <div class="compact-header">
+            <div class="header-left">
+                <span style="font-size: 18px;">🛒</span>
+                <div>
+                    <span class="header-title-text">E-Commerce Customer Retention & Churn Analytics</span>
+                    <span class="header-tagline" style="margin-left: 8px;">Midnight Intelligence • MySQL 8.0 Star Schema Data Warehouse</span>
                 </div>
             </div>
-            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-                <div class="header-palette-box" title="Frozen Mist Palette (#7C7D75, #ADACA7, #FCF8D8, #D9DADF, #DD700B)">
-                    <span style="font-size: 10.5px; font-weight: 700; color: {COLOR_GRAPHITE}; margin-right: 2px;">FROZEN MIST</span>
-                    <span class="header-swatch" style="background-color: {COLOR_CINNAMON};"></span>
-                    <span class="header-swatch" style="background-color: {COLOR_GRAPHITE};"></span>
-                    <span class="header-swatch" style="background-color: {COLOR_STONE};"></span>
-                    <span class="header-swatch" style="background-color: {COLOR_MIST};"></span>
-                    <span class="header-swatch" style="background-color: {COLOR_CREAM};"></span>
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <div class="header-palette-pill">
+                    <span class="swatch-dot" style="background-color: {COLOR_PRIMARY};"></span>
+                    <span class="swatch-dot" style="background-color: {COLOR_SECONDARY};"></span>
+                    <span class="swatch-dot" style="background-color: {COLOR_SUCCESS};"></span>
+                    <span class="swatch-dot" style="background-color: {COLOR_WARNING};"></span>
+                    <span class="swatch-dot" style="background-color: {COLOR_DANGER};"></span>
+                    <span style="font-size: 9.5px; font-weight: 700; color: #94A3B8; margin-left: 2px;">MIDNIGHT INDIGO</span>
                 </div>
                 <span class="header-badge">● LIVE WAREHOUSE</span>
             </div>
@@ -752,46 +717,46 @@ def render_header():
     )
 
 
-def render_kpi_cards():
-    """Render 6 balanced, responsive Frozen Mist KPI cards."""
+def render_six_kpi_cards():
+    """Render 6 KPI cards in a single, perfectly balanced horizontal row on desktop."""
     st.markdown(
         f"""
-        <div class="kpi-grid">
-            <div class="kpi-card">
-                <div class="kpi-accent-top" style="background-color: {COLOR_CINNAMON};"></div>
-                <div class="kpi-label">Net Sales Revenue</div>
-                <div class="kpi-val" title="£{net_sales:,.0f}">£{net_sales:,.0f}</div>
-                <span class="kpi-pill pill-cream">Gross: £{gross_sales:,.0f}</span>
+        <div class="kpi-row-grid">
+            <div class="kpi-box">
+                <div class="kpi-top-bar" style="background-color: {COLOR_PRIMARY};"></div>
+                <div class="kpi-name">Net Sales Revenue</div>
+                <div class="kpi-number" title="£{net_sales:,.0f}">£{net_sales:,.0f}</div>
+                <span class="kpi-pill-tag" style="background: rgba(59,130,246,0.15); color: #93C5FD; border: 1px solid rgba(59,130,246,0.3);">Gross: £{gross_sales:,.0f}</span>
             </div>
-            <div class="kpi-card">
-                <div class="kpi-accent-top" style="background-color: {COLOR_GRAPHITE};"></div>
-                <div class="kpi-label">Sales Orders</div>
-                <div class="kpi-val">{total_invoices:,}</div>
-                <span class="kpi-pill pill-slate">{total_units:,} Units</span>
+            <div class="kpi-box">
+                <div class="kpi-top-bar" style="background-color: {COLOR_SECONDARY};"></div>
+                <div class="kpi-name">Sales Orders</div>
+                <div class="kpi-number">{total_invoices:,}</div>
+                <span class="kpi-pill-tag" style="background: rgba(34,211,238,0.15); color: #67E8F9; border: 1px solid rgba(34,211,238,0.3);">{total_units:,} Units</span>
             </div>
-            <div class="kpi-card">
-                <div class="kpi-accent-top" style="background-color: {COLOR_CINNAMON};"></div>
-                <div class="kpi-label">Returns & Refunds</div>
-                <div class="kpi-val">£{returns_val:,.0f}</div>
-                <span class="kpi-pill pill-cinnamon">Rate: {return_rate_pct:.1f}%</span>
+            <div class="kpi-box">
+                <div class="kpi-top-bar" style="background-color: {COLOR_DANGER};"></div>
+                <div class="kpi-name">Returns & Refunds</div>
+                <div class="kpi-number">£{returns_val:,.0f}</div>
+                <span class="kpi-pill-tag" style="background: rgba(248,113,113,0.15); color: #FCA5A5; border: 1px solid rgba(248,113,113,0.3);">Rate: {return_rate_pct:.1f}%</span>
             </div>
-            <div class="kpi-card">
-                <div class="kpi-accent-top" style="background-color: {COLOR_STONE};"></div>
-                <div class="kpi-label">Avg Order Value (AOV)</div>
-                <div class="kpi-val">£{avg_invoice_val:.2f}</div>
-                <span class="kpi-pill pill-mist">Per Sale Order</span>
+            <div class="kpi-box">
+                <div class="kpi-top-bar" style="background-color: {COLOR_MUTED};"></div>
+                <div class="kpi-name">Average Order Value</div>
+                <div class="kpi-number">£{avg_invoice_val:.2f}</div>
+                <span class="kpi-pill-tag" style="background: rgba(148,163,184,0.15); color: #CBD5E1; border: 1px solid rgba(148,163,184,0.3);">Per Sale Order</span>
             </div>
-            <div class="kpi-card">
-                <div class="kpi-accent-top" style="background-color: {COLOR_CINNAMON};"></div>
-                <div class="kpi-label">Repeat Purchase Rate</div>
-                <div class="kpi-val">{repeat_rate_pct:.1f}%</div>
-                <span class="kpi-pill pill-cream">{repeat_cust_count:,} Repeat Buyers</span>
+            <div class="kpi-box">
+                <div class="kpi-top-bar" style="background-color: {COLOR_SUCCESS};"></div>
+                <div class="kpi-name">Repeat Purchase Rate</div>
+                <div class="kpi-number">{repeat_rate_pct:.1f}%</div>
+                <span class="kpi-pill-tag" style="background: rgba(16,185,129,0.15); color: #6EE7B7; border: 1px solid rgba(16,185,129,0.3);">{repeat_cust_count:,} Repeat Buyers</span>
             </div>
-            <div class="kpi-card">
-                <div class="kpi-accent-top" style="background-color: {COLOR_GRAPHITE};"></div>
-                <div class="kpi-label">Customer Churn Risk</div>
-                <div class="kpi-val">{churn_risk_pct:.1f}%</div>
-                <span class="kpi-pill pill-cinnamon">{at_risk_count:,} At-Risk / Lapsed</span>
+            <div class="kpi-box">
+                <div class="kpi-top-bar" style="background-color: {COLOR_WARNING};"></div>
+                <div class="kpi-name">Customer Churn Risk</div>
+                <div class="kpi-number">{churn_risk_pct:.1f}%</div>
+                <span class="kpi-pill-tag" style="background: rgba(245,158,11,0.15); color: #FCD34D; border: 1px solid rgba(245,158,11,0.3);">{at_risk_count:,} Lapsed (>90d)</span>
             </div>
         </div>
         """,
@@ -799,43 +764,43 @@ def render_kpi_cards():
     )
 
 
-render_header()
-render_kpi_cards()
+render_compact_header()
+render_six_kpi_cards()
 
 
-# Helper function to style all Plotly figures consistently
-def style_figure(fig, height=350):
-    """Apply consistent typography, transparent background, and subtle gridlines."""
-    grid_col = "#2E3035" if is_dark else "#F0EFEA"
-    tick_col = COLOR_STONE if is_dark else COLOR_GRAPHITE
+# Helper function to style all Plotly figures consistently for viewport compactness
+def style_figure(fig, height=230):
+    """Apply consistent Midnight Indigo typography, transparent canvas, and compact gridlines."""
+    grid_col = "rgba(41, 56, 77, 0.45)" if is_dark else "rgba(203, 213, 225, 0.6)"
+    tick_col = COLOR_MUTED if is_dark else "#64748B"
 
     fig.update_layout(
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
         height=height,
-        font=dict(family="'Plus Jakarta Sans', -apple-system, sans-serif", size=11.5, color=tick_col),
-        margin=dict(l=15, r=15, t=15, b=15),
+        font=dict(family="'Plus Jakarta Sans', -apple-system, sans-serif", size=10.5, color=tick_col),
+        margin=dict(l=10, r=10, t=10, b=10),
         legend=dict(
             orientation="h",
             yanchor="bottom",
             y=1.02,
             xanchor="right",
             x=1,
-            font=dict(size=11),
+            font=dict(size=9.5),
             bgcolor="rgba(0,0,0,0)",
         ),
     )
     fig.update_xaxes(
         gridcolor=grid_col,
         zeroline=False,
-        tickfont=dict(size=10.5, color=tick_col),
-        title_font=dict(size=11.5, color=tick_col),
+        tickfont=dict(size=9.5, color=tick_col),
+        title_font=dict(size=10, color=tick_col),
     )
     fig.update_yaxes(
         gridcolor=grid_col,
         zeroline=False,
-        tickfont=dict(size=10.5, color=tick_col),
-        title_font=dict(size=11.5, color=tick_col),
+        tickfont=dict(size=9.5, color=tick_col),
+        title_font=dict(size=10, color=tick_col),
     )
     return fig
 
@@ -857,18 +822,19 @@ tab_overview, tab_retention, tab_rfm, tab_products, tab_explorer, tab_audit = st
 
 
 # =============================================================================
-# TAB 1: EXECUTIVE OVERVIEW
+# TAB 1: EXECUTIVE OVERVIEW (2 × 2 CLEAN GRID, ZERO-SCROLL DESKTOP)
 # =============================================================================
 with tab_overview:
-    r1_col1, r1_col2 = st.columns([7, 5])
+    # 2x2 Grid: Row 1
+    g1_c1, g1_c2 = st.columns([6, 6])
 
-    with r1_col1:
+    with g1_c1:
         with st.container(border=True):
             st.markdown(
                 """
-                <div style="margin-bottom: 8px;">
-                    <div style="font-size: 14.5px; font-weight: 700; letter-spacing: -0.2px;">📈 Monthly Net Sales & MoM Growth Dynamics</div>
-                    <div style="font-size: 11.5px; color: #7C7D75;">Net sales (£) with secondary Month-over-Month growth trajectory</div>
+                <div class="chart-panel-header">
+                    <span class="chart-panel-title">📈 Monthly Net Sales & MoM Growth Dynamics</span>
+                    <span class="chart-panel-sub">Net sales (£) vs returns with secondary growth trend</span>
                 </div>
                 """,
                 unsafe_allow_html=True,
@@ -895,8 +861,8 @@ with tab_overview:
                 go.Bar(
                     x=monthly_agg.index,
                     y=monthly_agg["net_sales"],
-                    name="Net Sales (£)",
-                    marker_color=COLOR_CINNAMON,
+                    name="Net Sales",
+                    marker_color=COLOR_PRIMARY,
                     opacity=0.92,
                 ),
                 secondary_y=False,
@@ -905,9 +871,9 @@ with tab_overview:
                 go.Bar(
                     x=monthly_agg.index,
                     y=monthly_agg["returns"],
-                    name="Returns & Credits (£)",
-                    marker_color=COLOR_GRAPHITE,
-                    opacity=0.75,
+                    name="Returns",
+                    marker_color=COLOR_DANGER,
+                    opacity=0.8,
                 ),
                 secondary_y=False,
             )
@@ -915,27 +881,27 @@ with tab_overview:
                 go.Scatter(
                     x=monthly_agg.index,
                     y=monthly_agg["mom_pct"],
-                    name="MoM Growth %",
+                    name="MoM %",
                     mode="lines+markers",
-                    line=dict(color="#2B2D2F" if not is_dark else COLOR_CREAM, width=2.5),
-                    marker=dict(size=6, color=COLOR_CINNAMON),
+                    line=dict(color=COLOR_SECONDARY, width=2.2),
+                    marker=dict(size=5, color=COLOR_SECONDARY),
                 ),
                 secondary_y=True,
             )
 
             fig_monthly.update_layout(barmode="group")
             fig_monthly.update_yaxes(title_text="Sales (£)", secondary_y=False)
-            fig_monthly.update_yaxes(title_text="MoM Growth (%)", secondary_y=True)
-            style_figure(fig_monthly, height=340)
+            fig_monthly.update_yaxes(title_text="MoM %", secondary_y=True)
+            style_figure(fig_monthly, height=225)
             st.plotly_chart(fig_monthly, use_container_width=True)
 
-    with r1_col2:
+    with g1_c2:
         with st.container(border=True):
             st.markdown(
                 """
-                <div style="margin-bottom: 8px;">
-                    <div style="font-size: 14.5px; font-weight: 700; letter-spacing: -0.2px;">🌍 Geographic Revenue Distribution</div>
-                    <div style="font-size: 11.5px; color: #7C7D75;">Top markets ranked by gross sales volume</div>
+                <div class="chart-panel-header">
+                    <span class="chart-panel-title">🌍 Geographic Revenue Distribution</span>
+                    <span class="chart-panel-sub">Top global markets ranked by gross sales volume</span>
                 </div>
                 """,
                 unsafe_allow_html=True,
@@ -949,16 +915,17 @@ with tab_overview:
                 .sort_values(by="gross_sales", ascending=False)
             )
 
-            top10_c = country_rev.head(10).copy()
-            bar_colors = [COLOR_CINNAMON] + [COLOR_GRAPHITE] * (len(top10_c) - 1)
+            top7_c = country_rev.head(7).copy()
+            # Highlight top market in Electric Blue, others in secondary/indigo tones
+            bar_colors = [COLOR_PRIMARY] + [COLOR_SECONDARY] + ["#6366F1"] + ["#475569"] * (len(top7_c) - 3)
 
             fig_c = px.bar(
-                top10_c,
+                top7_c,
                 x="gross_sales",
                 y="country",
                 orientation="h",
                 text="gross_sales",
-                labels={"gross_sales": "Gross Sales (£)", "country": "Country"},
+                labels={"gross_sales": "Sales (£)", "country": "Country"},
                 template=plotly_template,
             )
             fig_c.update_traces(
@@ -968,62 +935,157 @@ with tab_overview:
                 opacity=0.9,
             )
             fig_c.update_layout(showlegend=False, yaxis=dict(autorange="reversed"))
-            style_figure(fig_c, height=340)
+            style_figure(fig_c, height=225)
             st.plotly_chart(fig_c, use_container_width=True)
 
-    r2_col1, r2_col2 = st.columns(2)
+    # 2x2 Grid: Row 2
+    g2_c1, g2_c2 = st.columns([6, 6])
 
-    with r2_col1:
+    with g2_c1:
         with st.container(border=True):
             st.markdown(
                 """
-                <div style="margin-bottom: 8px;">
-                    <div style="font-size: 14.5px; font-weight: 700; letter-spacing: -0.2px;">🏆 Top 10 Revenue-Driving Products</div>
-                    <div style="font-size: 11.5px; color: #7C7D75;">High velocity catalog SKUs ranked by total sales</div>
+                <div class="chart-panel-header">
+                    <span class="chart-panel-title">🔄 Customer Retention & Cohort Decay Trend</span>
+                    <span class="chart-panel-sub">Average retention % across tenures from acquisition (M0 = 100%)</span>
                 </div>
                 """,
                 unsafe_allow_html=True,
             )
 
-            top_prod = (
-                filtered_df[filtered_df["line_type"] == "sale"]
-                .groupby(["stock_code", "description"])
-                .agg(sales=("line_value", "sum"), units=("quantity", "sum"))
-                .reset_index()
-                .sort_values(by="sales", ascending=False)
-                .head(10)
-            )
-            top_prod["short_desc"] = (
-                top_prod["description"].astype(str).str.slice(0, 26) + " (" + top_prod["stock_code"] + ")"
-            )
-            prod_bar_colors = [COLOR_CINNAMON] + [COLOR_GRAPHITE] * (len(top_prod) - 1)
+            cohort_matrix_df = cohort_pct_df.set_index("cohort")
+            age_cols = [c for c in cohort_matrix_df.columns if c.isdigit()]
+            avg_retention_series = cohort_matrix_df[age_cols].mean(axis=0)
 
-            fig_prod = px.bar(
-                top_prod,
-                x="sales",
-                y="short_desc",
-                orientation="h",
-                text="sales",
-                labels={"sales": "Sales (£)", "short_desc": "Product"},
-                template=plotly_template,
+            fig_decay = go.Figure()
+            fig_decay.add_trace(
+                go.Scatter(
+                    x=[f"M+{c}" for c in age_cols],
+                    y=avg_retention_series.values,
+                    mode="lines+markers+text",
+                    line=dict(color=COLOR_SECONDARY, width=2.5),
+                    marker=dict(size=6, color=COLOR_PRIMARY),
+                    text=[f"{v:.0f}%" for v in avg_retention_series.values],
+                    textposition="top center",
+                    fill="tozeroy",
+                    fillcolor="rgba(34, 211, 238, 0.08)",
+                    name="Retention %",
+                )
             )
-            fig_prod.update_traces(
-                marker_color=prod_bar_colors,
-                texttemplate="£%{text:,.0f}",
-                textposition="inside",
-                opacity=0.9,
+            fig_decay.update_layout(
+                xaxis_title="Tenure (Months)",
+                yaxis_title="Retention (%)",
+                showlegend=False,
             )
-            fig_prod.update_layout(yaxis=dict(autorange="reversed"), showlegend=False)
-            style_figure(fig_prod, height=320)
-            st.plotly_chart(fig_prod, use_container_width=True)
+            style_figure(fig_decay, height=225)
+            st.plotly_chart(fig_decay, use_container_width=True)
 
-    with r2_col2:
+    with g2_c2:
         with st.container(border=True):
             st.markdown(
                 """
-                <div style="margin-bottom: 8px;">
-                    <div style="font-size: 14.5px; font-weight: 700; letter-spacing: -0.2px;">⏰ Weekly & Hourly Sales Volume Heatmap</div>
-                    <div style="font-size: 11.5px; color: #7C7D75;">Order volume concentration across weekdays and operating hours</div>
+                <div class="chart-panel-header">
+                    <span class="chart-panel-title">👥 Customer Churn & RFM Segment Share</span>
+                    <span class="chart-panel-sub">Total revenue (£) by behavioral lifecycle segment</span>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
+
+            rfm_summary = (
+                rfm_df.groupby("segment")
+                .agg(
+                    customers=("customer_id", "count"),
+                    total_revenue=("monetary", "sum"),
+                )
+                .reset_index()
+                .sort_values(by="total_revenue", ascending=False)
+            )
+
+            fig_rfm_rev = px.bar(
+                rfm_summary,
+                x="segment",
+                y="total_revenue",
+                color="segment",
+                color_discrete_map=SEGMENT_COLORS,
+                text="total_revenue",
+                template=plotly_template,
+            )
+            fig_rfm_rev.update_traces(texttemplate="£%{text:,.0f}", textposition="outside", opacity=0.92)
+            fig_rfm_rev.update_layout(showlegend=False, yaxis_title="Revenue (£)")
+            style_figure(fig_rfm_rev, height=225)
+            st.plotly_chart(fig_rfm_rev, use_container_width=True)
+
+
+# =============================================================================
+# TAB 2: DETAILED CUSTOMER RETENTION & COHORTS
+# =============================================================================
+with tab_retention:
+    with st.container(border=True):
+        st.markdown(
+            """
+            <div class="chart-panel-header">
+                <span class="chart-panel-title">🔄 13-Month Customer Cohort Retention Matrix</span>
+                <span class="chart-panel-sub">Tracks percentage of acquired cohorts returning in subsequent calendar months (M0 = 100%)</span>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+        cohort_matrix_df = cohort_pct_df.set_index("cohort")
+        age_cols = [c for c in cohort_matrix_df.columns if c.isdigit()]
+        z_matrix = cohort_matrix_df[age_cols].values
+
+        fig_cohort = px.imshow(
+            z_matrix,
+            labels=dict(x="Cohort Age (Months Since Acquisition)", y="Acquisition Cohort Month", color="Retention (%)"),
+            x=[f"M+{c}" for c in age_cols],
+            y=cohort_matrix_df.index.tolist(),
+            color_continuous_scale=MIDNIGHT_HEATMAP,
+            aspect="auto",
+            text_auto=".1f",
+            template=plotly_template,
+        )
+        style_figure(fig_cohort, height=440)
+        st.plotly_chart(fig_cohort, use_container_width=True)
+
+    c_col1, c_col2 = st.columns(2)
+
+    with c_col1:
+        with st.container(border=True):
+            st.markdown(
+                """
+                <div class="chart-panel-header">
+                    <span class="chart-panel-title">👥 New Customer Acquisition Influx</span>
+                    <span class="chart-panel-sub">First-time customers acquired by monthly cohort</span>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
+
+            counts_data = cohort_counts_df.set_index("cohort")
+            cohort_sizes = counts_data["0"]
+            size_colors = [COLOR_PRIMARY if v == cohort_sizes.max() else COLOR_BORDER for v in cohort_sizes.values]
+
+            fig_sizes = px.bar(
+                x=cohort_sizes.index,
+                y=cohort_sizes.values,
+                labels={"x": "Acquisition Month", "y": "Acquired Customers"},
+                template=plotly_template,
+                text_auto=True,
+            )
+            fig_sizes.update_traces(marker_color=size_colors, opacity=0.9)
+            fig_sizes.update_layout(showlegend=False)
+            style_figure(fig_sizes, height=270)
+            st.plotly_chart(fig_sizes, use_container_width=True)
+
+    with c_col2:
+        with st.container(border=True):
+            st.markdown(
+                """
+                <div class="chart-panel-header">
+                    <span class="chart-panel-title">⏰ Weekly & Hourly Sales Volume Cadence</span>
+                    <span class="chart-panel-sub">Transaction volume distribution across weekday operating hours</span>
                 </div>
                 """,
                 unsafe_allow_html=True,
@@ -1042,111 +1104,12 @@ with tab_overview:
             fig_cadence = px.imshow(
                 cadence_matrix,
                 labels=dict(x="Hour of Day", y="Day of Week", color="Sales (£)"),
-                color_continuous_scale=FROZEN_MIST_HEATMAP,
+                color_continuous_scale=MIDNIGHT_HEATMAP,
                 template=plotly_template,
                 aspect="auto",
             )
-            style_figure(fig_cadence, height=320)
+            style_figure(fig_cadence, height=270)
             st.plotly_chart(fig_cadence, use_container_width=True)
-
-
-# =============================================================================
-# TAB 2: CUSTOMER RETENTION & COHORTS
-# =============================================================================
-with tab_retention:
-    with st.container(border=True):
-        st.markdown(
-            """
-            <div style="margin-bottom: 8px;">
-                <div style="font-size: 15px; font-weight: 700; letter-spacing: -0.2px;">🔄 13-Month Customer Cohort Retention Matrix</div>
-                <div style="font-size: 11.5px; color: #7C7D75;">
-                    Tracks customer cohort retention activity over time from acquisition month (M0 = 100%) through subsequent calendar periods.
-                </div>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-
-        cohort_matrix_df = cohort_pct_df.set_index("cohort")
-        age_cols = [c for c in cohort_matrix_df.columns if c.isdigit()]
-        z_matrix = cohort_matrix_df[age_cols].values
-
-        fig_cohort = px.imshow(
-            z_matrix,
-            labels=dict(x="Cohort Age (Months Since Acquisition)", y="Acquisition Cohort Month", color="Retention (%)"),
-            x=[f"M+{c}" for c in age_cols],
-            y=cohort_matrix_df.index.tolist(),
-            color_continuous_scale=FROZEN_MIST_HEATMAP,
-            aspect="auto",
-            text_auto=".1f",
-            template=plotly_template,
-        )
-        style_figure(fig_cohort, height=450)
-        st.plotly_chart(fig_cohort, use_container_width=True)
-
-    c_col1, c_col2 = st.columns(2)
-
-    with c_col1:
-        with st.container(border=True):
-            st.markdown(
-                """
-                <div style="margin-bottom: 8px;">
-                    <div style="font-size: 14.5px; font-weight: 700; letter-spacing: -0.2px;">👥 New Customer Acquisition by Cohort</div>
-                    <div style="font-size: 11.5px; color: #7C7D75;">First-time buyers acquired during each calendar month</div>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
-
-            counts_data = cohort_counts_df.set_index("cohort")
-            cohort_sizes = counts_data["0"]
-            size_colors = [COLOR_CINNAMON if v == cohort_sizes.max() else COLOR_GRAPHITE for v in cohort_sizes.values]
-
-            fig_sizes = px.bar(
-                x=cohort_sizes.index,
-                y=cohort_sizes.values,
-                labels={"x": "Cohort Acquisition Month", "y": "Acquired Customers"},
-                template=plotly_template,
-                text_auto=True,
-            )
-            fig_sizes.update_traces(marker_color=size_colors, opacity=0.9)
-            fig_sizes.update_layout(showlegend=False)
-            style_figure(fig_sizes, height=310)
-            st.plotly_chart(fig_sizes, use_container_width=True)
-
-    with c_col2:
-        with st.container(border=True):
-            st.markdown(
-                """
-                <div style="margin-bottom: 8px;">
-                    <div style="font-size: 14.5px; font-weight: 700; letter-spacing: -0.2px;">📉 Average Retention Decay Curve</div>
-                    <div style="font-size: 11.5px; color: #7C7D75;">Aggregated retention rate across all observed customer tenures</div>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
-
-            avg_retention_series = cohort_matrix_df[age_cols].mean(axis=0)
-            fig_decay = go.Figure()
-            fig_decay.add_trace(
-                go.Scatter(
-                    x=[f"Month {c}" for c in age_cols],
-                    y=avg_retention_series.values,
-                    mode="lines+markers+text",
-                    line=dict(color=COLOR_CINNAMON, width=2.8),
-                    marker=dict(size=7, color=COLOR_GRAPHITE),
-                    text=[f"{v:.1f}%" for v in avg_retention_series.values],
-                    textposition="top right",
-                    name="Average Retention",
-                )
-            )
-            fig_decay.update_layout(
-                xaxis_title="Tenure (Months)",
-                yaxis_title="Average Retention (%)",
-                showlegend=False,
-            )
-            style_figure(fig_decay, height=310)
-            st.plotly_chart(fig_decay, use_container_width=True)
 
 
 # =============================================================================
@@ -1156,11 +1119,9 @@ with tab_rfm:
     with st.container(border=True):
         st.markdown(
             """
-            <div style="margin-bottom: 8px;">
-                <div style="font-size: 15px; font-weight: 700; letter-spacing: -0.2px;">👥 RFM Customer Behavioral Segmentation & Churn Engine</div>
-                <div style="font-size: 11.5px; color: #7C7D75;">
-                    Recency (days inactive), Frequency (distinct qualifying orders), and Monetary value (£ total spend) scored 1–5 using percentile rankings.
-                </div>
+            <div class="chart-panel-header">
+                <span class="chart-panel-title">👥 RFM Customer Behavioral Segmentation Matrix</span>
+                <span class="chart-panel-sub">Recency (days inactive), Frequency (orders), and Monetary (£) scored 1–5 via percentile ranking</span>
             </div>
             """,
             unsafe_allow_html=True,
@@ -1182,7 +1143,6 @@ with tab_rfm:
         r_col1, r_col2 = st.columns(2)
 
         with r_col1:
-            st.markdown("##### 🍰 Customer Count Share by Segment")
             fig_donut = px.pie(
                 rfm_summary,
                 names="segment",
@@ -1193,49 +1153,32 @@ with tab_rfm:
                 template=plotly_template,
             )
             fig_donut.update_traces(textinfo="percent+label", textposition="inside")
-            style_figure(fig_donut, height=300)
+            style_figure(fig_donut, height=270)
             st.plotly_chart(fig_donut, use_container_width=True)
 
         with r_col2:
-            st.markdown("##### 💰 Total Net Revenue Generated by Segment (£)")
-            fig_rfm_rev = px.bar(
-                rfm_summary,
-                x="segment",
-                y="total_revenue",
+            sample_rfm = rfm_df.sample(min(1200, len(rfm_df)), random_state=42)
+            fig_scatter = px.scatter(
+                sample_rfm,
+                x="recency_days",
+                y="frequency",
+                size="monetary",
                 color="segment",
                 color_discrete_map=SEGMENT_COLORS,
-                text="total_revenue",
+                hover_data={"customer_id": True, "monetary": ":,.2f", "recency_days": True, "frequency": True},
+                labels={"recency_days": "Recency (Days Inactive)", "frequency": "Frequency (Orders)"},
                 template=plotly_template,
             )
-            fig_rfm_rev.update_traces(texttemplate="£%{text:,.0f}", textposition="outside", opacity=0.9)
-            fig_rfm_rev.update_layout(showlegend=False, yaxis_title="Revenue (£)")
-            style_figure(fig_rfm_rev, height=300)
-            st.plotly_chart(fig_rfm_rev, use_container_width=True)
-
-        st.markdown("---")
-        st.markdown("##### 🎯 2D Recency vs. Frequency Matrix (Bubble Size = Total Revenue)")
-        sample_rfm = rfm_df.sample(min(1200, len(rfm_df)), random_state=42)
-        fig_scatter = px.scatter(
-            sample_rfm,
-            x="recency_days",
-            y="frequency",
-            size="monetary",
-            color="segment",
-            color_discrete_map=SEGMENT_COLORS,
-            hover_data={"customer_id": True, "monetary": ":,.2f", "recency_days": True, "frequency": True},
-            labels={"recency_days": "Recency (Days Inactive)", "frequency": "Frequency (Number of Orders)"},
-            template=plotly_template,
-        )
-        fig_scatter.update_traces(marker=dict(line=dict(width=0.8, color="#FFFFFF" if not is_dark else "#1A1A1A"), opacity=0.82))
-        style_figure(fig_scatter, height=420)
-        st.plotly_chart(fig_scatter, use_container_width=True)
+            fig_scatter.update_traces(marker=dict(line=dict(width=0.6, color="#0B1220"), opacity=0.85))
+            style_figure(fig_scatter, height=270)
+            st.plotly_chart(fig_scatter, use_container_width=True)
 
     with st.container(border=True):
         st.markdown(
             """
-            <div style="margin-bottom: 8px;">
-                <div style="font-size: 15px; font-weight: 700; letter-spacing: -0.2px;">🛡️ Churn Inactivity Lifecycle Bands & CRM Playbook</div>
-                <div style="font-size: 11.5px; color: #7C7D75;">Customer distribution across non-contractual inactivity windows and retention strategies</div>
+            <div class="chart-panel-header">
+                <span class="chart-panel-title">🛡️ Churn Inactivity Lifecycle Bands & CRM Win-Back Playbook</span>
+                <span class="chart-panel-sub">Customer distribution across non-contractual inactivity windows and retention strategies</span>
             </div>
             """,
             unsafe_allow_html=True,
@@ -1255,13 +1198,13 @@ with tab_rfm:
                 x="inactivity_band",
                 y="count",
                 color="inactivity_band",
-                color_discrete_sequence=[COLOR_GRAPHITE, COLOR_STONE, "#B45309", COLOR_CINNAMON],
+                color_discrete_sequence=[COLOR_SUCCESS, COLOR_WARNING, COLOR_DANGER, "#475569"],
                 template=plotly_template,
                 text_auto=True,
             )
             fig_bands.update_traces(opacity=0.9)
-            fig_bands.update_layout(showlegend=False, xaxis_title="Inactivity Lifecycle Band", yaxis_title="Customers")
-            style_figure(fig_bands, height=310)
+            fig_bands.update_layout(showlegend=False, xaxis_title="Inactivity Band", yaxis_title="Customers")
+            style_figure(fig_bands, height=260)
             st.plotly_chart(fig_bands, use_container_width=True)
 
         with p2:
@@ -1300,9 +1243,9 @@ with tab_products:
         with st.container(border=True):
             st.markdown(
                 """
-                <div style="margin-bottom: 8px;">
-                    <div style="font-size: 14.5px; font-weight: 700; letter-spacing: -0.2px;">📊 Top 20 Products Pareto Analysis (80/20)</div>
-                    <div style="font-size: 11.5px; color: #7C7D75;">Sales volume against cumulative catalog revenue share</div>
+                <div class="chart-panel-header">
+                    <span class="chart-panel-title">📊 Top 20 Products Pareto Analysis (80/20)</span>
+                    <span class="chart-panel-sub">Sales volume against cumulative catalog revenue share</span>
                 </div>
                 """,
                 unsafe_allow_html=True,
@@ -1326,7 +1269,7 @@ with tab_products:
                     x=prod_pareto["stock_code"],
                     y=prod_pareto["line_value"],
                     name="Sales (£)",
-                    marker_color=COLOR_GRAPHITE,
+                    marker_color=COLOR_PRIMARY,
                     opacity=0.85,
                 ),
                 secondary_y=False,
@@ -1337,24 +1280,24 @@ with tab_products:
                     y=prod_pareto["cum_pct"],
                     name="Cumulative %",
                     mode="lines+markers",
-                    line=dict(color=COLOR_CINNAMON, width=2.6),
-                    marker=dict(size=6, color=COLOR_CINNAMON),
+                    line=dict(color=COLOR_SECONDARY, width=2.4),
+                    marker=dict(size=5, color=COLOR_SECONDARY),
                 ),
                 secondary_y=True,
             )
-            fig_pareto.add_hline(y=80, line_dash="dash", line_color=COLOR_STONE, secondary_y=True)
+            fig_pareto.add_hline(y=80, line_dash="dash", line_color=COLOR_WARNING, secondary_y=True)
             fig_pareto.update_yaxes(title_text="Sales (£)", secondary_y=False)
             fig_pareto.update_yaxes(title_text="Cumulative Share (%)", secondary_y=True, range=[0, 105])
-            style_figure(fig_pareto, height=340)
+            style_figure(fig_pareto, height=290)
             st.plotly_chart(fig_pareto, use_container_width=True)
 
     with prod_col2:
         with st.container(border=True):
             st.markdown(
                 """
-                <div style="margin-bottom: 8px;">
-                    <div style="font-size: 14.5px; font-weight: 700; letter-spacing: -0.2px;">🚨 Highest Refund & Return Impact SKUs</div>
-                    <div style="font-size: 11.5px; color: #7C7D75;">Products accounting for the highest gross refund values</div>
+                <div class="chart-panel-header">
+                    <span class="chart-panel-title">🚨 Highest Return & Refund Impact SKUs</span>
+                    <span class="chart-panel-sub">Products accounting for the highest gross cancellation value</span>
                 </div>
                 """,
                 unsafe_allow_html=True,
@@ -1382,13 +1325,13 @@ with tab_products:
                 template=plotly_template,
             )
             fig_returns.update_traces(
-                marker_color=COLOR_CINNAMON,
+                marker_color=COLOR_DANGER,
                 texttemplate="£%{text:,.0f}",
                 textposition="inside",
                 opacity=0.88,
             )
             fig_returns.update_layout(yaxis=dict(autorange="reversed"), showlegend=False)
-            style_figure(fig_returns, height=340)
+            style_figure(fig_returns, height=290)
             st.plotly_chart(fig_returns, use_container_width=True)
 
 
@@ -1399,9 +1342,9 @@ with tab_explorer:
     with st.container(border=True):
         st.markdown(
             """
-            <div style="margin-bottom: 8px;">
-                <div style="font-size: 15px; font-weight: 700; letter-spacing: -0.2px;">🔍 Live Transaction Explorer & Record Inspector</div>
-                <div style="font-size: 11.5px; color: #7C7D75;">Search, sort, filter, and inspect transactional rows matching your active slicers</div>
+            <div class="chart-panel-header">
+                <span class="chart-panel-title">🔍 Live Transaction Explorer & Record Inspector</span>
+                <span class="chart-panel-sub">Search, sort, filter, and inspect transactional rows matching your active slicers</span>
             </div>
             """,
             unsafe_allow_html=True,
@@ -1531,9 +1474,9 @@ with tab_audit:
     with st.container(border=True):
         st.markdown(
             """
-            <div style="margin-bottom: 8px;">
-                <div style="font-size: 15px; font-weight: 700; letter-spacing: -0.2px;">🛡️ Enterprise Data Warehouse & Reconciliation Audit</div>
-                <div style="font-size: 11.5px; color: #7C7D75;">Star schema structure and automated cross-system zero-discrepancy reconciliation report</div>
+            <div class="chart-panel-header">
+                <span class="chart-panel-title">🛡️ Enterprise Data Warehouse & Reconciliation Audit</span>
+                <span class="chart-panel-sub">Star schema structure and automated cross-system zero-discrepancy reconciliation report</span>
             </div>
             """,
             unsafe_allow_html=True,
