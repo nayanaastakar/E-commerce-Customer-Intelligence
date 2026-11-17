@@ -2,7 +2,7 @@
 E-Commerce Customer Retention & Churn Analytics Platform
 Executive Interactive Business Intelligence Dashboard
 Built with Streamlit, Plotly, Pandas, and MySQL 8.0 Star Schema Data Warehouse.
-Inspired by Enterprise Power BI Analytics Dashboards.
+Theme: Frozen Mist (#7C7D75, #ADACA7, #FCF8D8, #D9DADF, #DD700B)
 """
 
 import io
@@ -25,7 +25,7 @@ log = logging.getLogger("dashboard")
 # Page Configuration
 st.set_page_config(
     page_title="E-Commerce Customer Intelligence & Retention Platform",
-    page_icon="🛒",
+    page_icon="❄️",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -36,7 +36,57 @@ EXPORTS_DIR = ROOT / "exports"
 REPORTS_DIR = ROOT / "reports"
 
 # -----------------------------------------------------------------------------
-# 1. DATA CACHING & INGESTION
+# 1. COLOR SYSTEM (FROZEN MIST PALETTE)
+# -----------------------------------------------------------------------------
+# Color Swatches from User Reference:
+# 1. #7C7D75 - Graphite Slate Gray
+# 2. #ADACA7 - Warm Stone Gray
+# 3. #FCF8D8 - Soft Pale Cream / Warm Ivory
+# 4. #D9DADF - Cool Light Mist Gray
+# 5. #DD700B - Vibrant Cinnamon Orange Accent
+
+COLOR_CINNAMON = "#DD700B"
+COLOR_GRAPHITE = "#7C7D75"
+COLOR_STONE = "#ADACA7"
+COLOR_CREAM = "#FCF8D8"
+COLOR_MIST = "#D9DADF"
+
+# Custom Heatmap Gradient
+FROZEN_MIST_HEATMAP = [
+    [0.0, "#FCF8D8"],   # Cream (low / baseline)
+    [0.2, "#D9DADF"],   # Cool Mist Gray
+    [0.45, "#ADACA7"],  # Warm Stone Gray
+    [0.72, "#7C7D75"],  # Graphite Slate
+    [1.0, "#DD700B"],   # Vibrant Cinnamon (peak retention)
+]
+
+# Qualitative Palette for Segments & Multi-categories
+FROZEN_MIST_DISCRETE = [
+    "#DD700B",  # Cinnamon
+    "#7C7D75",  # Graphite
+    "#ADACA7",  # Stone
+    "#B45309",  # Deep Amber Cinnamon
+    "#646660",  # Dark Slate
+    "#E67E22",  # Warm Orange
+    "#9CA3AF",  # Medium Gray
+    "#D9DADF",  # Mist
+]
+
+# Segment Specific Color Mapping
+SEGMENT_COLORS = {
+    "Champions": "#DD700B",
+    "Loyal Customers": "#7C7D75",
+    "Potential Loyalists": "#B45309",
+    "Recent Customers": "#ADACA7",
+    "At-Risk Customers": "#D97706",
+    "Hibernating Customers": "#52544F",
+    "Other Customers": "#8E8F8B",
+    "Guest / Unregistered": "#D9DADF",
+}
+
+
+# -----------------------------------------------------------------------------
+# 2. DATA CACHING & INGESTION
 # -----------------------------------------------------------------------------
 
 @st.cache_data(show_spinner=False)
@@ -91,7 +141,7 @@ def load_all_datasets():
         parse_dates=["invoice_date"],
     )
 
-    # Enrich with customer segment
+    # Enrich with customer segment and time attributes
     trans_df["segment"] = (
         trans_df["customer_id"].map(seg_map).fillna("Guest / Unregistered").astype("category")
     )
@@ -117,42 +167,45 @@ def load_all_datasets():
     return trans_df, rfm_df, monthly_df, cohort_pct_df, cohort_counts_df, dq_report, audit_report
 
 
-with st.spinner("Connecting to data warehouse and loading customer marts..."):
+with st.spinner("Connecting to warehouse and loading Frozen Mist data marts..."):
     trans_df, rfm_df, monthly_df, cohort_pct_df, cohort_counts_df, dq_report, audit_report = (
         load_all_datasets()
     )
 
 
 # -----------------------------------------------------------------------------
-# 2. THEME INJECTION & STYLING (POWER BI AESTHETIC)
+# 3. THEME INJECTION & CSS STYLING (FROZEN MIST AESTHETIC)
 # -----------------------------------------------------------------------------
 
-def apply_theme_styles(is_dark: bool):
-    """Inject custom CSS for Power BI look & feel with dark/light themes."""
-    if is_dark:
-        bg_color = "#0B1120"
-        card_bg = "#1E293B"
-        border_color = "#334155"
-        text_primary = "#F8FAFC"
-        text_secondary = "#94A3B8"
-        card_shadow = "0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3)"
-        sidebar_bg = "#0F172A"
-        header_gradient = "linear-gradient(90deg, #1E293B, #0F172A)"
+def apply_frozen_mist_theme(theme_choice: str):
+    """Inject custom CSS implementing the exact Frozen Mist palette."""
+    if "Dark" in theme_choice:
+        bg_color = "#18191B"
+        card_bg = "#232527"
+        border_color = "#393B3E"
+        text_primary = "#FCF8D8"      # Pale Cream text on dark
+        text_secondary = "#ADACA7"    # Warm Stone Gray
+        card_shadow = "0 6px 14px rgba(0, 0, 0, 0.45)"
+        sidebar_bg = "#1F2022"
+        header_gradient = "linear-gradient(90deg, #242628 0%, #1A1B1D 100%)"
+        tab_bg = "#1F2022"
     else:
-        bg_color = "#F8FAFC"
-        card_bg = "#FFFFFF"
-        border_color = "#E2E8F0"
-        text_primary = "#0F172A"
-        text_secondary = "#64748B"
-        card_shadow = "0 4px 12px rgba(15, 23, 42, 0.05), 0 1px 3px rgba(15, 23, 42, 0.03)"
-        sidebar_bg = "#F1F5F9"
-        header_gradient = "linear-gradient(90deg, #FFFFFF, #F8FAFC)"
+        bg_color = "#F5F6F8"          # Cool light mist canvas
+        card_bg = "#FFFFFF"          # Pure white card surface
+        border_color = "#D9DADF"      # Cool Mist border
+        text_primary = "#242526"      # Deep graphite charcoal
+        text_secondary = "#7C7D75"    # Slate graphite gray
+        card_shadow = "0 4px 12px rgba(124, 125, 117, 0.08), 0 1px 3px rgba(124, 125, 117, 0.04)"
+        sidebar_bg = "#EBECEF"        # Light mist sidebar
+        header_gradient = "linear-gradient(90deg, #FFFFFF 0%, #FCF8D8 100%)"
+        tab_bg = "#FFFFFF"
 
     css = f"""
     <style>
         .stApp {{
             background-color: {bg_color};
             color: {text_primary};
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }}
         [data-testid="stSidebar"] {{
             background-color: {sidebar_bg};
@@ -161,9 +214,10 @@ def apply_theme_styles(is_dark: bool):
         /* Executive Header */
         .header-container {{
             background: {header_gradient};
-            padding: 18px 24px;
+            padding: 20px 26px;
             border-radius: 12px;
             border: 1px solid {border_color};
+            border-left: 6px solid {COLOR_CINNAMON};
             margin-bottom: 20px;
             box-shadow: {card_shadow};
         }}
@@ -175,13 +229,31 @@ def apply_theme_styles(is_dark: bool):
             display: flex;
             align-items: center;
             gap: 12px;
-            letter-spacing: -0.5px;
+            letter-spacing: -0.4px;
         }}
         .header-subtitle {{
             font-size: 13px;
             color: {text_secondary};
-            margin-top: 4px;
+            margin-top: 5px;
             font-weight: 500;
+        }}
+        /* Swatch Palette Pill */
+        .palette-pill {{
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: {card_bg};
+            padding: 4px 10px;
+            border-radius: 20px;
+            border: 1px solid {border_color};
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }}
+        .swatch-circle {{
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            display: inline-block;
+            border: 1px solid rgba(0,0,0,0.1);
         }}
         /* KPI Cards */
         .kpi-card {{
@@ -196,7 +268,7 @@ def apply_theme_styles(is_dark: bool):
         }}
         .kpi-card:hover {{
             transform: translateY(-2px);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 8px 18px rgba(221, 112, 11, 0.12);
         }}
         .kpi-accent-bar {{
             position: absolute;
@@ -229,36 +301,41 @@ def apply_theme_styles(is_dark: bool):
             padding: 3px 8px;
             border-radius: 6px;
         }}
-        .badge-positive {{
-            background-color: rgba(34, 197, 94, 0.15);
-            color: #16A34A;
+        .badge-cinnamon {{
+            background-color: rgba(221, 112, 11, 0.14);
+            color: {COLOR_CINNAMON};
         }}
-        .badge-negative {{
-            background-color: rgba(239, 68, 68, 0.15);
-            color: #DC2626;
+        .badge-cream {{
+            background-color: {COLOR_CREAM};
+            color: {COLOR_GRAPHITE};
+            border: 1px solid {COLOR_STONE};
         }}
-        .badge-neutral {{
-            background-color: rgba(148, 163, 184, 0.15);
-            color: {text_secondary};
+        .badge-graphite {{
+            background-color: rgba(124, 125, 117, 0.14);
+            color: {COLOR_GRAPHITE};
         }}
-        .badge-accent {{
-            background-color: rgba(59, 130, 246, 0.15);
-            color: #2563EB;
+        .badge-stone {{
+            background-color: {COLOR_MIST};
+            color: {text_primary};
         }}
-        /* Section Containers */
-        .section-card {{
-            background-color: {card_bg};
-            border: 1px solid {border_color};
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: {card_shadow};
-            margin-bottom: 20px;
+        /* Tabs Styling */
+        button[data-baseweb="tab"] {{
+            font-weight: 600 !important;
+            font-size: 14px !important;
         }}
-        /* Custom Button */
+        button[data-baseweb="tab"][aria-selected="true"] {{
+            color: {COLOR_CINNAMON} !important;
+            border-bottom: 3px solid {COLOR_CINNAMON} !important;
+        }}
+        /* Buttons */
         .stButton>button {{
             border-radius: 8px;
             font-weight: 600;
             transition: all 0.2s;
+        }}
+        .stButton>button:hover {{
+            border-color: {COLOR_CINNAMON} !important;
+            color: {COLOR_CINNAMON} !important;
         }}
     </style>
     """
@@ -266,19 +343,19 @@ def apply_theme_styles(is_dark: bool):
 
 
 # -----------------------------------------------------------------------------
-# 3. SIDEBAR CONTROLS & DYNAMIC SLICERS
+# 4. SIDEBAR CONTROLS & DYNAMIC SLICERS
 # -----------------------------------------------------------------------------
 
 # Theme Toggle in Sidebar
-st.sidebar.markdown("### 🎨 Theme & Appearance")
+st.sidebar.markdown("### 🎨 Theme & Palette")
 theme_mode = st.sidebar.radio(
     "Select Theme",
-    ["Light (Power BI Enterprise)", "Dark (Modern Executive)"],
+    ["❄️ Frozen Mist (Cinnamon & Slate)", "🌙 Frozen Mist Dark"],
+    index=0,
     label_visibility="collapsed",
-    horizontal=True,
 )
 is_dark = "Dark" in theme_mode
-apply_theme_styles(is_dark)
+apply_frozen_mist_theme(theme_mode)
 plotly_template = "plotly_dark" if is_dark else "plotly_white"
 
 st.sidebar.markdown("---")
@@ -315,12 +392,6 @@ else:
     start_date, end_date = min_avail_date, max_avail_date
 
 # Country Slicer
-top_countries = (
-    trans_df[trans_df["line_type"] == "sale"]["country"]
-    .value_counts()
-    .head(15)
-    .index.tolist()
-)
 all_countries = sorted(trans_df["country"].unique().tolist())
 
 selected_countries = st.sidebar.multiselect(
@@ -379,16 +450,18 @@ if st.sidebar.button("🔄 Reset All Filters", use_container_width=True):
 st.sidebar.markdown("---")
 st.sidebar.markdown(
     """
-    **Warehouse Architecture**:
-    - **Engine**: MySQL 8.0 Star Schema
-    - **Fact Grain**: Single Invoice Line
-    - **Reconciliation**: 100% Match (£0.00 Diff)
+    **Frozen Mist System**:
+    - `#DD700B` Cinnamon Accent
+    - `#7C7D75` Graphite Slate
+    - `#ADACA7` Warm Stone
+    - `#D9DADF` Mist Gray
+    - `#FCF8D8` Warm Cream
     """
 )
 
 
 # -----------------------------------------------------------------------------
-# 4. FILTER EXECUTION & DYNAMIC RECALCULATION
+# 5. FILTER EXECUTION & DYNAMIC RECALCULATION
 # -----------------------------------------------------------------------------
 
 def filter_dataframe(df):
@@ -417,13 +490,11 @@ def filter_dataframe(df):
 
 filtered_df = filter_dataframe(trans_df)
 
-# Check Empty State
 if filtered_df.empty:
     st.error("⚠️ No transactions match your active filter criteria. Please broaden your selections or click 'Reset All Filters'.")
     st.stop()
 
-
-# Calculate Dynamic KPIs
+# Dynamic KPIs Calculation
 sales_mask = filtered_df["line_type"] == "sale"
 canc_mask = filtered_df["line_type"] == "cancellation"
 
@@ -436,14 +507,12 @@ total_invoices = int(filtered_df[sales_mask]["invoice_no"].nunique())
 total_units = int(filtered_df[sales_mask]["quantity"].sum())
 avg_invoice_val = (gross_sales / total_invoices) if total_invoices > 0 else 0.0
 
-# Customers & Repeat Rate
 registered_sales = filtered_df[sales_mask & filtered_df["has_customer"]]
 cust_order_counts = registered_sales.groupby("customer_id")["invoice_no"].nunique()
 active_cust_count = int(len(cust_order_counts))
 repeat_cust_count = int((cust_order_counts >= 2).sum())
 repeat_rate_pct = (repeat_cust_count / active_cust_count * 100) if active_cust_count > 0 else 0.0
 
-# Churn Risk in Active Filter
 at_risk_count = int(
     registered_sales[registered_sales["segment"].isin(["At-Risk Customers", "Hibernating Customers"])][
         "customer_id"
@@ -453,25 +522,34 @@ churn_risk_pct = (at_risk_count / active_cust_count * 100) if active_cust_count 
 
 
 # -----------------------------------------------------------------------------
-# 5. DASHBOARD HEADER & KPI CARDS
+# 6. DASHBOARD HEADER & KPI CARDS (FROZEN MIST STYLE)
 # -----------------------------------------------------------------------------
 
 def render_header():
-    """Render executive dashboard header with project badge and timestamps."""
+    """Render executive header with Frozen Mist swatch palette pill."""
     last_updated = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     st.markdown(
         f"""
         <div class="header-container">
-            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
                 <div>
-                    <h1 class="header-title">🛒 E-Commerce Customer Retention & Churn Analytics</h1>
+                    <h1 class="header-title">
+                        <span>🛒 E-Commerce Customer Retention & Churn Analytics</span>
+                    </h1>
                     <div class="header-subtitle">
-                        Enterprise Analytics Platform • Python ETL → MySQL 8.0 Star Schema → RFM Segmentation & Cohort Engine
+                        Frozen Mist Edition • Python ETL → MySQL 8.0 Star Schema → RFM Segmentation & Cohort Decay Engine
                     </div>
                 </div>
-                <div style="text-align: right;">
-                    <span class="kpi-badge badge-accent">● LIVE WAREHOUSE VERIFIED</span>
-                    <div style="font-size: 11px; color: #64748B; margin-top: 4px;">Last Refreshed: {last_updated}</div>
+                <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                    <div class="palette-pill" title="Frozen Mist Palette (#7C7D75, #ADACA7, #FCF8D8, #D9DADF, #DD700B)">
+                        <span style="font-size: 11px; font-weight: 700; color: {COLOR_GRAPHITE}; margin-right: 4px;">FROZEN MIST:</span>
+                        <span class="swatch-circle" style="background-color: {COLOR_GRAPHITE};"></span>
+                        <span class="swatch-circle" style="background-color: {COLOR_STONE};"></span>
+                        <span class="swatch-circle" style="background-color: {COLOR_CREAM};"></span>
+                        <span class="swatch-circle" style="background-color: {COLOR_MIST};"></span>
+                        <span class="swatch-circle" style="background-color: {COLOR_CINNAMON};"></span>
+                    </div>
+                    <span class="kpi-badge badge-cinnamon">● LIVE WAREHOUSE</span>
                 </div>
             </div>
         </div>
@@ -481,17 +559,17 @@ def render_header():
 
 
 def render_kpi_cards():
-    """Render 6 Power BI-inspired metric cards with accent bars and badge pills."""
+    """Render 6 Frozen Mist metric cards with cinnamon & graphite accents."""
     k1, k2, k3, k4, k5, k6 = st.columns(6)
 
     with k1:
         st.markdown(
             f"""
             <div class="kpi-card">
-                <div class="kpi-accent-bar" style="background-color: #2563EB;"></div>
+                <div class="kpi-accent-bar" style="background-color: {COLOR_CINNAMON};"></div>
                 <div class="kpi-label">Net Sales Revenue</div>
                 <div class="kpi-value">£{net_sales:,.0f}</div>
-                <span class="kpi-badge badge-positive">Gross: £{gross_sales:,.0f}</span>
+                <span class="kpi-badge badge-cream">Gross: £{gross_sales:,.0f}</span>
             </div>
             """,
             unsafe_allow_html=True,
@@ -501,24 +579,23 @@ def render_kpi_cards():
         st.markdown(
             f"""
             <div class="kpi-card">
-                <div class="kpi-accent-bar" style="background-color: #10B981;"></div>
+                <div class="kpi-accent-bar" style="background-color: {COLOR_GRAPHITE};"></div>
                 <div class="kpi-label">Total Invoices</div>
                 <div class="kpi-value">{total_invoices:,}</div>
-                <span class="kpi-badge badge-positive">{total_units:,} Units</span>
+                <span class="kpi-badge badge-stone">{total_units:,} Units</span>
             </div>
             """,
             unsafe_allow_html=True,
         )
 
     with k3:
-        badge_cls = "badge-negative" if return_rate_pct > 8.0 else "badge-neutral"
         st.markdown(
             f"""
             <div class="kpi-card">
-                <div class="kpi-accent-bar" style="background-color: #EF4444;"></div>
+                <div class="kpi-accent-bar" style="background-color: {COLOR_CINNAMON};"></div>
                 <div class="kpi-label">Returns & Refunds</div>
                 <div class="kpi-value">£{returns_val:,.0f}</div>
-                <span class="kpi-badge {badge_cls}">Rate: {return_rate_pct:.1f}%</span>
+                <span class="kpi-badge badge-cinnamon">Rate: {return_rate_pct:.1f}%</span>
             </div>
             """,
             unsafe_allow_html=True,
@@ -528,10 +605,10 @@ def render_kpi_cards():
         st.markdown(
             f"""
             <div class="kpi-card">
-                <div class="kpi-accent-bar" style="background-color: #F59E0B;"></div>
+                <div class="kpi-accent-bar" style="background-color: {COLOR_STONE};"></div>
                 <div class="kpi-label">Avg Order Value (AOV)</div>
                 <div class="kpi-value">£{avg_invoice_val:.2f}</div>
-                <span class="kpi-badge badge-neutral">Per Sale Invoice</span>
+                <span class="kpi-badge badge-graphite">Per Sale Order</span>
             </div>
             """,
             unsafe_allow_html=True,
@@ -541,10 +618,10 @@ def render_kpi_cards():
         st.markdown(
             f"""
             <div class="kpi-card">
-                <div class="kpi-accent-bar" style="background-color: #8B5CF6;"></div>
+                <div class="kpi-accent-bar" style="background-color: {COLOR_CINNAMON};"></div>
                 <div class="kpi-label">Repeat Purchase Rate</div>
                 <div class="kpi-value">{repeat_rate_pct:.1f}%</div>
-                <span class="kpi-badge badge-positive">{repeat_cust_count:,} Repeat Buyers</span>
+                <span class="kpi-badge badge-cream">{repeat_cust_count:,} Repeat Buyers</span>
             </div>
             """,
             unsafe_allow_html=True,
@@ -554,10 +631,10 @@ def render_kpi_cards():
         st.markdown(
             f"""
             <div class="kpi-card">
-                <div class="kpi-accent-bar" style="background-color: #06B6D4;"></div>
+                <div class="kpi-accent-bar" style="background-color: {COLOR_GRAPHITE};"></div>
                 <div class="kpi-label">Churn Risk Ratio</div>
                 <div class="kpi-value">{churn_risk_pct:.1f}%</div>
-                <span class="kpi-badge badge-negative">{at_risk_count:,} At-Risk / Lapsed</span>
+                <span class="kpi-badge badge-cinnamon">{at_risk_count:,} At-Risk / Lapsed</span>
             </div>
             """,
             unsafe_allow_html=True,
@@ -571,7 +648,7 @@ st.markdown("<div style='height: 15px;'></div>", unsafe_allow_html=True)
 
 
 # -----------------------------------------------------------------------------
-# 6. NAVIGATION TABS (5 DEDICATED ANALYTICAL PAGES)
+# 7. NAVIGATION TABS (5 ANALYTICAL PAGES IN FROZEN MIST PALETTE)
 # -----------------------------------------------------------------------------
 
 tab_overview, tab_retention, tab_rfm, tab_products, tab_explorer, tab_audit = st.tabs(
@@ -593,9 +670,8 @@ with tab_overview:
     r1_col1, r1_col2 = st.columns([7, 5])
 
     with r1_col1:
-        st.markdown("#### 📈 Monthly Net Sales & MoM Growth Dynamics")
+        st.markdown(f"#### 📈 Monthly Net Sales & MoM Growth Dynamics")
 
-        # Dynamic monthly aggregation from filtered transactions
         m_sales = (
             filtered_df[filtered_df["line_type"] == "sale"]
             .groupby("year_month")["line_value"]
@@ -618,8 +694,8 @@ with tab_overview:
                 x=monthly_agg.index,
                 y=monthly_agg["net_sales"],
                 name="Net Sales (£)",
-                marker_color="#2563EB",
-                opacity=0.85,
+                marker_color=COLOR_CINNAMON,
+                opacity=0.9,
             ),
             secondary_y=False,
         )
@@ -628,8 +704,8 @@ with tab_overview:
                 x=monthly_agg.index,
                 y=monthly_agg["returns"],
                 name="Returns & Credits (£)",
-                marker_color="#EF4444",
-                opacity=0.75,
+                marker_color=COLOR_GRAPHITE,
+                opacity=0.8,
             ),
             secondary_y=False,
         )
@@ -639,8 +715,8 @@ with tab_overview:
                 y=monthly_agg["mom_pct"],
                 name="MoM Growth %",
                 mode="lines+markers",
-                line=dict(color="#10B981", width=3),
-                marker=dict(size=7),
+                line=dict(color="#2B2D2F" if not is_dark else COLOR_CREAM, width=3),
+                marker=dict(size=7, color=COLOR_CINNAMON),
             ),
             secondary_y=True,
         )
@@ -678,7 +754,7 @@ with tab_overview:
                 text="gross_sales",
                 labels={"gross_sales": "Gross Sales (£)", "country": "Country"},
                 color="gross_sales",
-                color_continuous_scale="Blues",
+                color_continuous_scale=[[0, COLOR_MIST], [0.35, COLOR_STONE], [0.7, COLOR_GRAPHITE], [1.0, COLOR_CINNAMON]],
                 template=plotly_template,
             )
             fig_c.update_traces(texttemplate="£%{text:,.0f}", textposition="outside")
@@ -690,7 +766,6 @@ with tab_overview:
             )
             st.plotly_chart(fig_c, use_container_width=True)
         else:
-            # Country Map with ISO mapping
             map_df = country_rev.copy()
             map_df["clean_country"] = map_df["country"].replace({"EIRE": "Ireland"})
             fig_map = px.choropleth(
@@ -700,7 +775,7 @@ with tab_overview:
                 color="gross_sales",
                 hover_name="country",
                 hover_data={"gross_sales": ":,.2f", "invoices": ":,"},
-                color_continuous_scale="Viridis",
+                color_continuous_scale=[[0, COLOR_MIST], [0.3, COLOR_STONE], [0.7, COLOR_GRAPHITE], [1.0, COLOR_CINNAMON]],
                 template=plotly_template,
             )
             fig_map.update_layout(
@@ -733,7 +808,7 @@ with tab_overview:
             text="sales",
             labels={"sales": "Sales (£)", "short_desc": "Product Name"},
             color="units",
-            color_continuous_scale="Teal",
+            color_continuous_scale=[[0, COLOR_STONE], [0.5, COLOR_GRAPHITE], [1.0, COLOR_CINNAMON]],
             template=plotly_template,
         )
         fig_prod.update_traces(texttemplate="£%{text:,.0f}", textposition="inside")
@@ -759,7 +834,7 @@ with tab_overview:
         fig_cadence = px.imshow(
             cadence_matrix,
             labels=dict(x="Hour of Day", y="Day of Week", color="Sales (£)"),
-            color_continuous_scale="Blues",
+            color_continuous_scale=FROZEN_MIST_HEATMAP,
             template=plotly_template,
             aspect="auto",
         )
@@ -773,7 +848,7 @@ with tab_overview:
 with tab_retention:
     st.markdown("### 🔄 13-Month Customer Cohort Retention Matrix")
     st.markdown(
-        "Measures percentage of acquired customers who continue returning and placing qualifying orders in subsequent months ($M_0 = 100\%$). Unobserved future cells are properly masked as NaN."
+        "Measures percentage of acquired customers who continue returning and placing qualifying orders in subsequent months ($M_0 = 100\%$). Rendered with the Frozen Mist gradient scale."
     )
 
     cohort_matrix_df = cohort_pct_df.set_index("cohort")
@@ -785,7 +860,7 @@ with tab_retention:
         labels=dict(x="Cohort Age (Months Since Acquisition)", y="Acquisition Cohort Month", color="Retention (%)"),
         x=[f"M+{c}" for c in age_cols],
         y=cohort_matrix_df.index.tolist(),
-        color_continuous_scale="YlGnBu",
+        color_continuous_scale=FROZEN_MIST_HEATMAP,
         aspect="auto",
         text_auto=".1f",
         template=plotly_template,
@@ -804,7 +879,7 @@ with tab_retention:
             y=cohort_sizes.values,
             labels={"x": "Cohort Acquisition Month", "y": "Acquired Customers"},
             color=cohort_sizes.values,
-            color_continuous_scale="Blues",
+            color_continuous_scale=[[0, COLOR_MIST], [0.5, COLOR_GRAPHITE], [1.0, COLOR_CINNAMON]],
             template=plotly_template,
             text_auto=True,
         )
@@ -820,8 +895,8 @@ with tab_retention:
                 x=[f"Month {c}" for c in age_cols],
                 y=avg_retention_series.values,
                 mode="lines+markers+text",
-                line=dict(color="#2563EB", width=3),
-                marker=dict(size=8, color="#1D4ED8"),
+                line=dict(color=COLOR_CINNAMON, width=3),
+                marker=dict(size=8, color=COLOR_GRAPHITE),
                 text=[f"{v:.1f}%" for v in avg_retention_series.values],
                 textposition="top right",
                 name="Average Retention",
@@ -875,7 +950,8 @@ with tab_rfm:
             names="segment",
             values="customers",
             hole=0.45,
-            color_discrete_sequence=px.colors.qualitative.Bold,
+            color="segment",
+            color_discrete_map=SEGMENT_COLORS,
             template=plotly_template,
         )
         fig_donut.update_traces(textinfo="percent+label")
@@ -889,6 +965,7 @@ with tab_rfm:
             x="segment",
             y="total_revenue",
             color="segment",
+            color_discrete_map=SEGMENT_COLORS,
             text="total_revenue",
             template=plotly_template,
         )
@@ -909,6 +986,7 @@ with tab_rfm:
         y="frequency",
         size="monetary",
         color="segment",
+        color_discrete_map=SEGMENT_COLORS,
         hover_data={"customer_id": True, "monetary": ":,.2f", "recency_days": True, "frequency": True},
         labels={"recency_days": "Recency (Days Inactive)", "frequency": "Frequency (Number of Orders)"},
         template=plotly_template,
@@ -933,7 +1011,7 @@ with tab_rfm:
             x="inactivity_band",
             y="count",
             color="inactivity_band",
-            color_discrete_sequence=["#10B981", "#F59E0B", "#F97316", "#EF4444"],
+            color_discrete_sequence=[COLOR_GRAPHITE, COLOR_STONE, "#B45309", COLOR_CINNAMON],
             template=plotly_template,
             text_auto=True,
         )
@@ -948,7 +1026,7 @@ with tab_rfm:
 
     with p2:
         st.markdown(
-            """
+            f"""
             | Segment | Customers | Strategy & Actionable Playbook | Primary Channel |
             |---|---|---|---|
             | **Champions** | 1,118 | VIP loyalty perks, exclusive early access, dedicated support | Direct Concierge & Email |
@@ -960,7 +1038,6 @@ with tab_rfm:
             """
         )
 
-        # Download At-Risk Target List
         at_risk_list = rfm_df[rfm_df["segment"] == "At-Risk Customers"][
             ["customer_id", "recency_days", "frequency", "monetary"]
         ].sort_values(by="monetary", ascending=False)
@@ -1001,7 +1078,7 @@ with tab_products:
                 x=prod_pareto["stock_code"],
                 y=prod_pareto["line_value"],
                 name="Sales (£)",
-                marker_color="#2563EB",
+                marker_color=COLOR_GRAPHITE,
             ),
             secondary_y=False,
         )
@@ -1011,7 +1088,8 @@ with tab_products:
                 y=prod_pareto["cum_pct"],
                 name="Cumulative %",
                 mode="lines+markers",
-                line=dict(color="#F59E0B", width=2.5),
+                line=dict(color=COLOR_CINNAMON, width=2.8),
+                marker=dict(size=6, color=COLOR_CINNAMON),
             ),
             secondary_y=True,
         )
@@ -1046,7 +1124,7 @@ with tab_products:
             text="refund_val",
             labels={"refund_val": "Refund Value (£)", "short_desc": "Product"},
             color="return_invoices",
-            color_continuous_scale="Reds",
+            color_continuous_scale=[[0, COLOR_STONE], [0.4, COLOR_GRAPHITE], [1.0, COLOR_CINNAMON]],
             template=plotly_template,
         )
         fig_returns.update_traces(texttemplate="£%{text:,.0f}", textposition="inside")
@@ -1095,11 +1173,9 @@ with tab_explorer:
     with t_col3:
         page_size = st.selectbox("Rows Per Page", [15, 25, 50, 100], index=0)
 
-    # Sort
     explored_df = explored_df.sort_values(by=sort_col, ascending=(sort_order == "Ascending"))
     total_records = len(explored_df)
 
-    # Pagination state
     if "current_page" not in st.session_state:
         st.session_state["current_page"] = 1
 
@@ -1111,7 +1187,6 @@ with tab_explorer:
     end_idx = min(start_idx + page_size, total_records)
     page_rows = explored_df.iloc[start_idx:end_idx]
 
-    # Data Table View
     st.dataframe(
         page_rows[
             [
@@ -1137,7 +1212,6 @@ with tab_explorer:
         use_container_width=True,
     )
 
-    # Pagination Controls
     pag_col1, pag_col2, pag_col3, pag_col4 = st.columns([2, 3, 3, 4])
     with pag_col1:
         if st.button("⬅️ Previous") and st.session_state["current_page"] > 1:
@@ -1150,7 +1224,6 @@ with tab_explorer:
             st.session_state["current_page"] += 1
             st.rerun()
     with pag_col4:
-        # Download Filtered Set as CSV or Excel
         csv_buffer = page_rows.to_csv(index=False).encode("utf-8")
         st.download_button(
             label="📥 Export Page to CSV",
@@ -1159,7 +1232,6 @@ with tab_explorer:
             mime="text/csv",
         )
 
-    # Single Record Inspector
     st.markdown("---")
     st.markdown("#### 🔬 Detailed Invoice Inspector")
     sample_invoices = page_rows["invoice_no"].unique().tolist()
