@@ -1130,7 +1130,7 @@ with tab_retention:
             text_auto=".1f",
             template=plotly_template,
         )
-        style_figure(fig_cohort, height=360)
+        style_figure(fig_cohort, height=290)
         st.plotly_chart(fig_cohort, use_container_width=True)
 
     c_col1, c_col2 = st.columns(2)
@@ -1657,29 +1657,3 @@ with tab_audit:
                 st.dataframe(pd.DataFrame(rec_comp), use_container_width=True, hide_index=True)
             else:
                 st.info("Run `python scripts/reconcile_sql.py` to regenerate database audit logs.")
-
-        st.markdown("##### 📜 Executable SQL Warehouse Analytics")
-        sql_choice = st.selectbox(
-            "Select Analytical SQL Query to Preview:",
-            [
-                "Headline KPIs (sql/sales_analysis.sql)",
-                "Monthly MoM Growth & Rolling Averages (sql/sales_analysis.sql)",
-                "Customer Inactivity Recency Bands (sql/customer_retention.sql)",
-                "RFM Percentile Scoring (sql/rfm_segmentation.sql)",
-                "Cohort Decay Matrix (sql/cohort_analysis.sql)",
-            ],
-        )
-
-        sql_dir = ROOT / "sql"
-        if "Headline" in sql_choice:
-            sql_text = (sql_dir / "sales_analysis.sql").read_text(encoding="utf-8")[:450]
-        elif "Monthly" in sql_choice:
-            sql_text = (sql_dir / "sales_analysis.sql").read_text(encoding="utf-8")[460:1300]
-        elif "Inactivity" in sql_choice:
-            sql_text = (sql_dir / "customer_retention.sql").read_text(encoding="utf-8")[800:1500]
-        elif "RFM" in sql_choice:
-            sql_text = (sql_dir / "rfm_segmentation.sql").read_text(encoding="utf-8")
-        else:
-            sql_text = (sql_dir / "cohort_analysis.sql").read_text(encoding="utf-8")
-
-        st.code(sql_text, language="sql")
