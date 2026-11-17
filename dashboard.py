@@ -202,67 +202,91 @@ def apply_midnight_indigo_theme():
             display: none !important;
         }}
 
-        /* Global App Base */
+        /* Global App Base - Strictly Non-Scrollable on Both Sides */
+        html, body, [data-testid="stAppViewContainer"], section.main {{
+            overflow: hidden !important;
+            overflow-y: hidden !important;
+            overflow-x: hidden !important;
+            height: 100vh !important;
+            max-height: 100vh !important;
+        }}
+
         .stApp {{
             background-color: {bg_canvas};
             color: {text_primary};
             font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            overflow-x: hidden;
+            overflow: hidden !important;
+            height: 100vh !important;
+            max-height: 100vh !important;
+        }}
+
+        /* Strictly Non-Scrollable Docked Sidebar */
+        [data-testid="stSidebar"],
+        [data-testid="stSidebar"] > div,
+        [data-testid="stSidebarContent"],
+        [data-testid="stSidebarUserContent"] {{
+            background-color: {sidebar_bg} !important;
+            border-right: 1px solid {border_col} !important;
+            min-width: 255px !important;
+            max-width: 255px !important;
+            overflow: hidden !important;
+            overflow-y: hidden !important;
+            overflow-x: hidden !important;
+            max-height: 100vh !important;
+        }}
+        [data-testid="stSidebar"] .block-container {{
+            padding: 0.5rem 0.65rem !important;
+            max-height: 100vh !important;
+            overflow: hidden !important;
         }}
 
         /* Ultra-compact Content Padding for Zero-Scroll Viewport */
         .block-container {{
-            padding-top: 0.6rem !important;
-            padding-bottom: 0.8rem !important;
-            padding-left: 1.2rem !important;
-            padding-right: 1.2rem !important;
+            padding-top: 0.35rem !important;
+            padding-bottom: 0.2rem !important;
+            padding-left: 0.9rem !important;
+            padding-right: 0.9rem !important;
             max-width: 100% !important;
+            height: 100vh !important;
+            box-sizing: border-box !important;
         }}
 
-        /* Stagnant Docked Sidebar */
-        [data-testid="stSidebar"] {{
-            background-color: {sidebar_bg} !important;
-            border-right: 1px solid {border_col} !important;
-            min-width: 265px !important;
-            max-width: 265px !important;
+        /* Reduce Vertical & Horizontal Gaps */
+        div[data-testid="stVerticalBlock"] {{
+            gap: 0.25rem !important;
         }}
-        [data-testid="stSidebar"] .block-container {{
-            padding: 0.75rem 0.8rem !important;
+        div[data-testid="stHorizontalBlock"] {{
+            gap: 0.4rem !important;
         }}
 
         /* Sidebar High-Contrast Text */
         [data-testid="stSidebar"] label,
         [data-testid="stSidebar"] span,
-        [data-testid="stSidebar"] p,
-        [data-testid="stSidebar"] div[role="radiogroup"] label p,
-        [data-testid="stSidebar"] div[role="radiogroup"] span {{
+        [data-testid="stSidebar"] p {{
             color: {text_primary} !important;
             font-weight: 500 !important;
-            font-size: 11px !important;
-        }}
-        [data-testid="stSidebar"] div[role="radiogroup"] label {{
-            margin-bottom: 3px !important;
+            font-size: 10.5px !important;
         }}
 
         /* Section Titles in Sidebar */
         .sidebar-section-title {{
-            font-size: 10px;
+            font-size: 9.5px;
             font-weight: 700;
             letter-spacing: 0.8px;
             text-transform: uppercase;
             color: {COLOR_SECONDARY};
-            margin: 8px 0 4px 0;
+            margin: 4px 0 2px 0;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 4px;
         }}
 
         /* Compact Widgets */
         label[data-testid="stWidgetLabel"] p {{
-            font-size: 11px !important;
+            font-size: 10.5px !important;
             font-weight: 600 !important;
             color: {text_secondary} !important;
-            margin-bottom: 2px !important;
+            margin-bottom: 1px !important;
         }}
         div[data-baseweb="select"] > div,
         div[data-baseweb="input"] > div,
@@ -270,7 +294,7 @@ def apply_midnight_indigo_theme():
             background-color: {input_bg} !important;
             border: 1px solid {border_col} !important;
             border-radius: 6px !important;
-            min-height: 32px !important;
+            min-height: 28px !important;
             transition: all 0.15s ease !important;
         }}
         div[data-baseweb="select"]:focus-within > div,
@@ -284,18 +308,18 @@ def apply_midnight_indigo_theme():
             background-color: rgba(59, 130, 246, 0.2) !important;
             border: 1px solid rgba(59, 130, 246, 0.45) !important;
             border-radius: 4px !important;
-            padding: 1px 6px !important;
+            padding: 1px 5px !important;
             color: #93C5FD !important;
-            font-size: 10px !important;
+            font-size: 9.5px !important;
             font-weight: 600 !important;
         }}
 
         /* Compact Buttons */
         .stButton > button {{
-            border-radius: 6px !important;
-            font-size: 11px !important;
+            border-radius: 5px !important;
+            font-size: 10.5px !important;
             font-weight: 600 !important;
-            padding: 4px 8px !important;
+            padding: 3px 6px !important;
             border: 1px solid {border_col} !important;
             background-color: {card_bg} !important;
             color: {text_primary} !important;
@@ -311,9 +335,9 @@ def apply_midnight_indigo_theme():
         .compact-header {{
             background-color: {card_bg};
             border: 1px solid {border_col};
-            border-radius: 8px;
-            padding: 7px 16px;
-            margin-bottom: 8px;
+            border-radius: 7px;
+            padding: 5px 14px;
+            margin-bottom: 5px;
             box-shadow: {card_shadow};
             display: flex;
             justify-content: space-between;
@@ -323,29 +347,29 @@ def apply_midnight_indigo_theme():
         .header-left {{
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }}
         .header-title-text {{
-            font-size: 16px;
+            font-size: 14.5px;
             font-weight: 800;
             color: {text_primary};
             letter-spacing: -0.3px;
             margin: 0;
-            line-height: 1.2;
+            line-height: 1.15;
         }}
         .header-tagline {{
-            font-size: 11px;
+            font-size: 10.5px;
             color: {text_secondary};
             font-weight: 500;
         }}
         .header-badge {{
             display: inline-flex;
             align-items: center;
-            gap: 5px;
-            font-size: 10px;
+            gap: 4px;
+            font-size: 9.5px;
             font-weight: 700;
-            padding: 3px 8px;
-            border-radius: 12px;
+            padding: 2px 7px;
+            border-radius: 10px;
             background-color: rgba(59, 130, 246, 0.15);
             color: #60A5FA;
             border: 1px solid rgba(59, 130, 246, 0.35);
@@ -353,15 +377,15 @@ def apply_midnight_indigo_theme():
         .header-palette-pill {{
             display: inline-flex;
             align-items: center;
-            gap: 4px;
+            gap: 3px;
             background: rgba(23, 36, 56, 0.6);
-            padding: 3px 8px;
-            border-radius: 12px;
+            padding: 2px 7px;
+            border-radius: 10px;
             border: 1px solid {border_col};
         }}
         .swatch-dot {{
-            width: 8px;
-            height: 8px;
+            width: 7px;
+            height: 7px;
             border-radius: 50%;
             display: inline-block;
         }}
@@ -370,25 +394,15 @@ def apply_midnight_indigo_theme():
         .kpi-row-grid {{
             display: grid;
             grid-template-columns: repeat(6, 1fr);
-            gap: 8px;
-            margin-bottom: 8px;
-        }}
-        @media (max-width: 1280px) {{
-            .kpi-row-grid {{
-                grid-template-columns: repeat(3, 1fr);
-            }}
-        }}
-        @media (max-width: 768px) {{
-            .kpi-row-grid {{
-                grid-template-columns: repeat(2, 1fr);
-            }}
+            gap: 6px;
+            margin-bottom: 5px;
         }}
 
         .kpi-box {{
             background-color: {card_bg};
             border: 1px solid {border_col};
-            border-radius: 8px;
-            padding: 8px 12px;
+            border-radius: 7px;
+            padding: 6px 10px;
             box-shadow: {card_shadow};
             position: relative;
             overflow: hidden;
@@ -403,13 +417,13 @@ def apply_midnight_indigo_theme():
             top: 0;
             left: 0;
             right: 0;
-            height: 3px;
+            height: 2.5px;
         }}
         .kpi-name {{
-            font-size: 9.5px;
+            font-size: 9px;
             text-transform: uppercase;
             font-weight: 700;
-            letter-spacing: 0.6px;
+            letter-spacing: 0.5px;
             color: {text_secondary};
             margin-bottom: 2px;
             white-space: nowrap;
@@ -417,12 +431,12 @@ def apply_midnight_indigo_theme():
             text-overflow: ellipsis;
         }}
         .kpi-number {{
-            font-size: 18px;
+            font-size: 16.5px;
             font-weight: 800;
             color: {text_primary};
             letter-spacing: -0.3px;
-            line-height: 1.15;
-            margin-bottom: 3px;
+            line-height: 1.1;
+            margin-bottom: 2px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -431,10 +445,10 @@ def apply_midnight_indigo_theme():
             display: inline-flex;
             align-items: center;
             gap: 3px;
-            font-size: 9.5px;
+            font-size: 9px;
             font-weight: 600;
-            padding: 1px 6px;
-            border-radius: 4px;
+            padding: 1px 5px;
+            border-radius: 3px;
             white-space: nowrap;
         }}
 
@@ -442,17 +456,17 @@ def apply_midnight_indigo_theme():
         div[data-testid="stTabs"] [data-baseweb="tab-list"] {{
             background-color: {tab_bg} !important;
             border: 1px solid {border_col} !important;
-            border-radius: 8px !important;
-            padding: 3px !important;
+            border-radius: 7px !important;
+            padding: 2px !important;
             gap: 2px !important;
-            margin-bottom: 8px !important;
+            margin-bottom: 5px !important;
         }}
         button[data-baseweb="tab"] {{
             color: {text_secondary} !important;
-            font-size: 11.5px !important;
+            font-size: 11px !important;
             font-weight: 600 !important;
-            padding: 5px 12px !important;
-            border-radius: 6px !important;
+            padding: 4px 10px !important;
+            border-radius: 5px !important;
             border: none !important;
             background-color: transparent !important;
             transition: all 0.12s ease-in-out !important;
@@ -474,10 +488,10 @@ def apply_midnight_indigo_theme():
         div[data-testid="stVerticalBlockBorderWrapper"] {{
             background-color: {card_bg} !important;
             border: 1px solid {border_col} !important;
-            border-radius: 8px !important;
+            border-radius: 7px !important;
             box-shadow: {card_shadow} !important;
-            padding: 8px 12px 4px 12px !important;
-            margin-bottom: 6px !important;
+            padding: 6px 10px 2px 10px !important;
+            margin-bottom: 3px !important;
         }}
 
         /* Chart Header Styles */
@@ -485,21 +499,35 @@ def apply_midnight_indigo_theme():
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 4px;
-            padding-bottom: 3px;
+            margin-bottom: 2px;
+            padding-bottom: 2px;
             border-bottom: 1px solid {border_col};
         }}
         .chart-panel-title {{
-            font-size: 12.5px;
+            font-size: 11.5px;
             font-weight: 700;
             color: {text_primary};
             letter-spacing: -0.2px;
             margin: 0;
         }}
         .chart-panel-sub {{
-            font-size: 10px;
+            font-size: 9.5px;
             color: {text_secondary};
             font-weight: 500;
+        }}
+
+        /* Inner scroll container only for detail table tabs (Tab 5 & 6) */
+        div[data-baseweb="tab-panel"] {{
+            max-height: calc(100vh - 135px) !important;
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+        }}
+        div[data-baseweb="tab-panel"]::-webkit-scrollbar {{
+            width: 3px;
+        }}
+        div[data-baseweb="tab-panel"]::-webkit-scrollbar-thumb {{
+            background: #29384D;
+            border-radius: 3px;
         }}
     </style>
     """
@@ -603,7 +631,7 @@ selected_types = st.sidebar.multiselect(
 )
 
 # Customer Identification Slicer
-cust_reg_filter = st.sidebar.radio(
+cust_reg_filter = st.sidebar.selectbox(
     "👤 Customer Identification",
     ["All Transactions", "Registered Customers Only", "Guest / Unregistered Only"],
     index=0,
@@ -892,7 +920,7 @@ with tab_overview:
             fig_monthly.update_layout(barmode="group")
             fig_monthly.update_yaxes(title_text="Sales (£)", secondary_y=False)
             fig_monthly.update_yaxes(title_text="MoM %", secondary_y=True)
-            style_figure(fig_monthly, height=225)
+            style_figure(fig_monthly, height=200)
             st.plotly_chart(fig_monthly, use_container_width=True)
 
     with g1_c2:
@@ -935,7 +963,7 @@ with tab_overview:
                 opacity=0.9,
             )
             fig_c.update_layout(showlegend=False, yaxis=dict(autorange="reversed"))
-            style_figure(fig_c, height=225)
+            style_figure(fig_c, height=200)
             st.plotly_chart(fig_c, use_container_width=True)
 
     # 2x2 Grid: Row 2
@@ -977,7 +1005,7 @@ with tab_overview:
                 yaxis_title="Retention (%)",
                 showlegend=False,
             )
-            style_figure(fig_decay, height=225)
+            style_figure(fig_decay, height=200)
             st.plotly_chart(fig_decay, use_container_width=True)
 
     with g2_c2:
@@ -1013,7 +1041,7 @@ with tab_overview:
             )
             fig_rfm_rev.update_traces(texttemplate="£%{text:,.0f}", textposition="outside", opacity=0.92)
             fig_rfm_rev.update_layout(showlegend=False, yaxis_title="Revenue (£)")
-            style_figure(fig_rfm_rev, height=225)
+            style_figure(fig_rfm_rev, height=200)
             st.plotly_chart(fig_rfm_rev, use_container_width=True)
 
 
