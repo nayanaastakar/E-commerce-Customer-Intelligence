@@ -392,7 +392,7 @@ def apply_midnight_indigo_theme():
             gap: 10px;
         }}
         .header-title-text {{
-            font-size: 15px;
+            font-size: 18.5px;
             font-weight: 800;
             color: {text_primary};
             letter-spacing: -0.3px;
@@ -400,7 +400,7 @@ def apply_midnight_indigo_theme():
             line-height: 1.2;
         }}
         .header-tagline {{
-            font-size: 10.5px;
+            font-size: 11px;
             color: {text_secondary};
             font-weight: 500;
         }}
@@ -617,11 +617,11 @@ is_dark = True
 # Stationary Left Sidebar Header
 st.sidebar.markdown(
     """
-    <div style="padding: 2px 0 8px 0; border-bottom: 1px solid #29384D; margin-bottom: 8px;">
-        <div style="font-size: 13.5px; font-weight: 800; color: #F8FAFC; letter-spacing: -0.2px; display: flex; align-items: center; gap: 6px;">
-            <span style="color: #22D3EE;">⚡</span> Customer Intelligence
+    <div style="padding: 4px 0 10px 0; border-bottom: 1px solid #29384D; margin-bottom: 10px;">
+        <div style="font-size: 18px; font-weight: 800; color: #F8FAFC; letter-spacing: -0.3px; display: flex; align-items: center; gap: 8px;">
+            <span style="color: #22D3EE; font-size: 20px;">⚡</span> Customer Intelligence
         </div>
-        <div style="font-size: 10px; color: #94A3B8; font-weight: 600; margin-top: 1px;">
+        <div style="font-size: 11.5px; color: #94A3B8; font-weight: 600; margin-top: 2px; padding-left: 2px;">
             Interactive Filter Slicers
         </div>
     </div>
@@ -785,10 +785,10 @@ def render_compact_header():
         f"""
         <div class="compact-header">
             <div class="header-left">
-                <span style="font-size: 18px;">🛒</span>
+                <span style="font-size: 20px;">🛒</span>
                 <div>
-                    <span class="header-title-text">E-Commerce Customer Retention & Churn Analytics</span>
-                    <span class="header-tagline" style="margin-left: 8px;">Midnight Intelligence • MySQL 8.0 Star Schema Data Warehouse</span>
+                    <div class="header-title-text">E-Commerce Customer Retention & Churn Analytics</div>
+                    <div class="header-tagline" style="margin-top: 1px;">Midnight Intelligence • MySQL 8.0 Star Schema Data Warehouse</div>
                 </div>
             </div>
             <div style="display: flex; align-items: center; gap: 8px;">
