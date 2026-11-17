@@ -1144,7 +1144,7 @@ with tab_retention:
             text_auto=".1f",
             template=plotly_template,
         )
-        style_figure(fig_cohort, height=290)
+        style_figure(fig_cohort, height=220)
         st.plotly_chart(fig_cohort, use_container_width=True)
 
     c_col1, c_col2 = st.columns(2)
@@ -1174,7 +1174,7 @@ with tab_retention:
             )
             fig_sizes.update_traces(marker_color=size_colors, opacity=0.9)
             fig_sizes.update_layout(showlegend=False)
-            style_figure(fig_sizes, height=215)
+            style_figure(fig_sizes, height=170)
             st.plotly_chart(fig_sizes, use_container_width=True)
 
     with c_col2:
@@ -1206,7 +1206,7 @@ with tab_retention:
                 template=plotly_template,
                 aspect="auto",
             )
-            style_figure(fig_cadence, height=215)
+            style_figure(fig_cadence, height=170)
             st.plotly_chart(fig_cadence, use_container_width=True)
 
 
