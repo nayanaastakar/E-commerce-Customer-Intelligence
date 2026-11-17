@@ -12,7 +12,8 @@ def capture_tabs():
 
     options = Options()
     options.add_argument("--headless=new")
-    options.add_argument("--window-size=1920,1080")
+    # Set window size to match actual content bounds so screenshots have NO extra bottom space!
+    options.add_argument("--window-size=1920,830")
     options.add_argument("--disable-gpu")
     options.add_argument("--no-sandbox")
     options.add_argument("--hide-scrollbars")
@@ -20,7 +21,6 @@ def capture_tabs():
     driver = webdriver.Chrome(options=options)
     try:
         driver.get("http://127.0.0.1:8501")
-        # Wait for Streamlit app to load
         WebDriverWait(driver, 20).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, 'div[data-testid="stTabs"]'))
         )
@@ -35,7 +35,6 @@ def capture_tabs():
             ("06_star_schema_audit.png", "Star Schema & Audit"),
         ]
 
-        # Find tab buttons
         tab_buttons = driver.find_elements(By.CSS_SELECTOR, 'button[data-baseweb="tab"]')
         print(f"Found {len(tab_buttons)} tabs")
 
