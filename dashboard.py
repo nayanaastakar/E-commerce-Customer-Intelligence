@@ -277,7 +277,7 @@ def apply_midnight_indigo_theme():
         /* Ultra-clean Responsive Content Container */
         .block-container {{
             padding-top: 0.4rem !important;
-            padding-bottom: 1.2rem !important;
+            padding-bottom: 0 !important;
             padding-left: 0.9rem !important;
             padding-right: 0.9rem !important;
             max-width: 100% !important;
@@ -286,10 +286,10 @@ def apply_midnight_indigo_theme():
 
         /* Reduce Vertical & Horizontal Gaps */
         div[data-testid="stVerticalBlock"] {{
-            gap: 0.35rem !important;
+            gap: 0.2rem !important;
         }}
         div[data-testid="stHorizontalBlock"] {{
-            gap: 0.5rem !important;
+            gap: 0.4rem !important;
         }}
 
         /* Sidebar High-Contrast Text */
@@ -546,9 +546,23 @@ def apply_midnight_indigo_theme():
             border: 1px solid {border_col} !important;
             border-radius: 8px !important;
             box-shadow: {card_shadow} !important;
-            padding: 8px 12px 6px 12px !important;
-            margin-bottom: 6px !important;
+            padding: 6px 10px 2px 10px !important;
+            margin-bottom: 4px !important;
             box-sizing: border-box !important;
+        }}
+
+        /* Eliminate Streamlit's auto-padding around plotly charts */
+        [data-testid="stPlotlyChart"] {{
+            margin: 0 !important;
+            padding: 0 !important;
+        }}
+        [data-testid="stPlotlyChart"] > div {{
+            margin: 0 !important;
+            padding: 0 !important;
+        }}
+        .js-plotly-plot, .plotly {{
+            margin: 0 !important;
+            padding: 0 !important;
         }}
 
         /* Chart Header Styles */
@@ -863,7 +877,7 @@ def style_figure(fig, height=230):
         plot_bgcolor="rgba(0,0,0,0)",
         height=height,
         font=dict(family="'Plus Jakarta Sans', -apple-system, sans-serif", size=10.5, color=tick_col),
-        margin=dict(l=10, r=10, t=10, b=10),
+        margin=dict(l=8, r=8, t=8, b=0),
         legend=dict(
             orientation="h",
             yanchor="bottom",
