@@ -1,0 +1,23 @@
+{
+  "name": "Frozen Mist",
+  "dataColors": [
+    "#DD700B",
+    "#7C7D75",
+    "#ADACA7",
+    "#B45309",
+    "#646660",
+    "#E67E22",
+    "#9CA3AF",
+    "#D9DADF"
+  ],
+  "background": "#F5F6F8",
+  "foreground": "#242526",
+  "tableAccent": "#DD700B",
+  "visualStyles": {
+    "*": {
+      "*": {
+        "outspace": [{ "color": { "solid": { "color": "#F5F6F8" } } }]
+      }
+    }
+  }
+}

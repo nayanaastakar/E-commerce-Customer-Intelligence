@@ -4,7 +4,7 @@
 ## Project Overview
 - **Developed a customer analytics solution** to analyse retention trends, churn patterns, and purchasing behaviour across 541,000+ transactional records.
 - **Implemented RFM segmentation, cohort analysis, and SQL window functions** (`ROW_NUMBER`, `NTILE`, `LAG`, running/rolling averages) to identify customer trends and lifecycle stages.
-- **Built an interactive dashboard & Power BI data model** to monitor customer retention, churn/inactivity bands, and key business performance indicators (£9.75M net sales, 65.58% repeat purchase rate).
+- **Built an interactive Streamlit & Plotly Business Intelligence Dashboard** styled with the **Frozen Mist** palette (`#DD700B` cinnamon accent, `#7C7D75` graphite slate, `#ADACA7` warm stone, `#FCF8D8` pale cream, `#D9DADF` cool mist) and a companion **Power BI data model** to monitor customer retention, churn/inactivity bands, and key business performance indicators (£9.75M net sales, 65.58% repeat purchase rate).
 
 ---
 
